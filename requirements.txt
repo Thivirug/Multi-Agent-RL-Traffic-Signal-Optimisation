@@ -1,0 +1,15 @@
+cloudpickle==3.1.1
+Farama-Notifications==0.0.4
+gymnasium==1.2.0
+numpy==2.3.2
+pandas==2.3.1
+pettingzoo==1.25.0
+pillow==11.3.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
+six==1.17.0
+-e git+https://github.com/LucasAlegre/sumo-rl.git@41e4c63eb4652c27ec18bc553048bb251f01cddf#egg=sumo_rl
+sumolib==1.24.0
+traci==1.24.0
+typing_extensions==4.14.1
+tzdata==2025.2

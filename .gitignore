@@ -1,0 +1,15 @@
+# Ignore virtual environment
+sumoenv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VSCode settings 
+.vscode/
+
+# Logs and outputs
+*.log
+
+# System files
+.DS_Store
