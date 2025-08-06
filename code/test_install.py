@@ -11,6 +11,8 @@ env = sumo_rl.parallel_env(net_file='sumo-rl/sumo_rl/nets/RESCO/grid4x4/grid4x4.
 # Reset the environment to start a new simulation
 observations = env.reset()
 
+print("Nu of agents:", len(env.agents))  
+
 while env.agents: # Continue until all agents are done
     actions = {agent: env.action_space(agent).sample() for agent in env.agents}  # Sample random actions for each agent
     observations, rewards, terminations, truncations, infos = env.step(actions) # Step the environment with the sampled actions
