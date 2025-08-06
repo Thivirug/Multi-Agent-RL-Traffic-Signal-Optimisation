@@ -6,7 +6,7 @@ import sumo_rl # type: ignore
 env = sumo_rl.parallel_env(net_file='sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml',
                   route_file='sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml',
                   use_gui=True,
-                  num_seconds=20)
+                  num_seconds=2000)
 
 # Reset the environment to start a new simulation
 observations = env.reset()
