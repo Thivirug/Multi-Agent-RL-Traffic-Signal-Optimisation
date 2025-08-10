@@ -12,6 +12,7 @@ First clone the repo
 project_root/
 ├── code/                  # Custom codebase 
 │   ├── experiments/       # Scripts for training/evaluation (mirrors sumo-rl's experiments/)
+│   │   ├── algorithms/    # RL-algorithms used to train agents (DQN, PPO, etc)
 │   │   ├── train_multiagent.py  # Main training script 
 │   │   └── evaluate.py    # Script for testing trained models
 │   ├── nets/              # Custom SUMO networks/routes (extend sumo-rl's nets/ if needed)
