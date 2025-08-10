@@ -6,9 +6,7 @@ First clone the repo
 3) pip install -r requirements.txt
    
 
-Tentative Dir structure
-
-## Project Directory Structure
+#### Tentative Project Directory Structure
 
 ```
 project_root/
