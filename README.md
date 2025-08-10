@@ -17,7 +17,7 @@ project_root/
 │   ├── nets/              # Custom SUMO networks/routes (extend sumo-rl's nets/ if needed)
 │   │   └── my_network/    # Example custom network dir
 │   │       ├── my_net.net.xml  # Generated via NETEDIT or netconvert
-│   │       └── my_routes.rou.xml  # Vehicle flows (generated via randomTrips.py or manually)
+│   │       └── my_routes.rou.xml  # Vehicle flows 
 │   ├── utils/             # Optional: Custom utilities (e.g., reward/observation functions)
 │   │   └── custom_rewards.py  # If overriding defaults
 │   ├── outputs/           # Logs, checkpoints, metrics (mirrors sumo-rl's outputs/)
