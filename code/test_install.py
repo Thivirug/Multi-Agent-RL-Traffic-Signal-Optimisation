@@ -11,7 +11,7 @@ env = sumo_rl.parallel_env(net_file='sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml',
 # Reset the environment to start a new simulation
 observations = env.reset()
 
-print("Nu of agents:", len(env.agents))  
+print("Number of agents:", len(env.agents))  
 
 while env.agents: # Continue until all agents are done
     actions = {agent: env.action_space(agent).sample() for agent in env.agents}  # Sample random actions for each agent
