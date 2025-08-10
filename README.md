@@ -8,6 +8,9 @@ First clone the repo
 
 Tentative Dir structure
 
+## Project Directory Structure
+
+```
 project_root/
 ├── code/                  # Custom codebase 
 │   ├── experiments/       # Scripts for training/evaluation (mirrors sumo-rl's experiments/)
@@ -20,7 +23,7 @@ project_root/
 │   ├── utils/             # Optional: Custom utilities (e.g., reward/observation functions)
 │   │   └── custom_rewards.py  # If overriding defaults
 │   ├── outputs/           # Logs, checkpoints, metrics (mirrors sumo-rl's outputs/)
-│   │   ├── checkpoints/   # RLlib model saves
+│   │   ├── checkpoints/   # Model saves
 │   │   └── logs/          # CSV metrics from sumo-rl env
 │   ├── config.py          # Shared hyperparameters/configs (e.g., env paths, RL settings)
 │   ├── test_gpu.py        # GPU test file
@@ -31,3 +34,4 @@ project_root/
 ├── mac_requirements.txt   # Platform-specific reqs
 ├── README.md              # Update with project notes
 └── requirements.txt       # Core dependencies (e.g., ray[rllib], gymnasium)
+```
