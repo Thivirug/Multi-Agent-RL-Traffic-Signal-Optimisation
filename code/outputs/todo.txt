@@ -1,0 +1,3 @@
+checkpoints - rllib checkpoints storage
+
+logs - for sumo-rl env logs metrics (.CSV)

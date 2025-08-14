@@ -1,0 +1,5 @@
+RL algorithms will be written within the algorithms dir
+
+train_multiagent - imports the algorithms and runs the agent in sumo
+
+evaluate_multiagent - views the optimal policy in action
