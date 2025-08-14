@@ -19,6 +19,7 @@ project_root/
 │   │   └── my_network/    # Example custom network dir
 │   │       ├── my_net.net.xml  # Generated via NETEDIT or netconvert
 │   │       └── my_routes.rou.xml  # Vehicle flows 
+│   ├── notebooks/         # jupyter notebooks for exploration and visualization
 │   ├── utils/             # Optional: Custom utilities (e.g., reward/observation functions)
 │   │   └── custom_rewards.py  # If overriding defaults
 │   ├── outputs/           # Logs, checkpoints, metrics (mirrors sumo-rl's outputs/)
