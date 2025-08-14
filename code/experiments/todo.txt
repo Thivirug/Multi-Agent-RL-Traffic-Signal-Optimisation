@@ -1,4 +1,4 @@
-RL algorithms will be written within the algorithms dir
+RL algorithms will be written within the algorithms.py script
 
 train_multiagent - imports the algorithms and runs the agent in sumo
 
