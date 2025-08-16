@@ -1,12 +1,12 @@
 # Configurations for multi-agent environment (Pettingzoo) and model training hyperparams
 
 # ! ------- ENV CONFIG -------
-# Parameters in sumo_rl.parallel_env (Get params From Line 93 in sumo-rl/sumo_rl/environment/env.py)
+# Parameters in sumo_rl.parallel_env (Get params starting from Line 93 in sumo-rl/sumo_rl/environment/env.py)
 ENV_CONFIG = {
-    'net_file': "",
-    'route_file': "",
-    'out_csv_name': "",
-    'use_gui': True,
+    'net_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml",
+    'route_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml",
+    'out_csv_name': "outputs/logs",
+    'use_gui': False,
     'num_seconds': 36000,
     # add more .. if needed
 }
