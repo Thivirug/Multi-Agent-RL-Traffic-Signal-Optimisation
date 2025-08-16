@@ -10,3 +10,5 @@ ENV_CONFIG = {
     'num_seconds': 36000,
     # add more .. if needed
 }
+
+# ! ------- Algorithm hyperparams -------
