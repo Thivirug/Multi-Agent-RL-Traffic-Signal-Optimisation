@@ -11,4 +11,4 @@ ENV_CONFIG = {
     # add more .. if needed
 }
 
-# ! ------- Algorithm hyperparams -------
+# ! ------- Algorithm hyperparams overrides -------
