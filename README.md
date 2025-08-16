@@ -26,8 +26,7 @@ project_root/
 │   │   ├── checkpoints/   # Model saves
 │   │   └── logs/          # CSV metrics from sumo-rl env
 │   ├── config.py          # Shared hyperparameters/configs (e.g., env paths, RL settings)
-│   ├── test_gpu.py        # GPU test file
-│   └── test_install.py    # Installation test file
+│   ├── initial_testing/   # Preliminary testing scripts (GPU, GUI, Env props, etc) 
 ├── sumo-rl/               # Cloned repo (install as package; don't add code here)
 ├── sumoenv/               # Virtual env (activate for all work)
 ├── .gitignore
