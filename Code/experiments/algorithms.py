@@ -22,6 +22,7 @@ class RL_Algorithms:
     def create_env(self, config = None):
         """
             Create a parallel env in SUMO.
+            config = None was added to make this compatible with the lambda in registry (:
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
 
