@@ -12,3 +12,13 @@ ENV_CONFIG = {
 }
 
 # ! ------- Algorithm hyperparams overrides -------
+
+# PPO
+PPO_hparams = {
+
+}
+
+# DQN 
+DQN_hparams = {
+    
+}
