@@ -5,7 +5,9 @@ from ray.rllib.algorithms.ppo import PPOConfig
 
 
 class RL_Algorithms:
-    pass
+    """
+        Common class to define ray rl algorithms. 
+    """
 
     # create env
 
@@ -13,4 +15,4 @@ class RL_Algorithms:
     # common logic for all algo. configs.
 
 
-    
+
