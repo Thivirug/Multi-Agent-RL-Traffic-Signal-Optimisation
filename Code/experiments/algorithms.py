@@ -4,4 +4,13 @@ import ray
 from ray.rllib.algorithms.ppo import PPOConfig
 
 
-# 1) PPO
+class RL_Algorithms:
+    pass
+
+    # create env
+
+
+    # common logic for all algo. configs.
+
+
+    
