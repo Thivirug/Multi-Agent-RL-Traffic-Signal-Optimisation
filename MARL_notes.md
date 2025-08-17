@@ -54,7 +54,7 @@
 
 ## 5. Parameter Sharing (Current Approach)
 
-- **What It Is**: All agents share the same policy network (weights), trained on their individual experiences.
+- **What It Is**: All agents share the same policy network (weights), trained on their individual experiences. This is a technique where all agents (traffic lights) share the same neural network policy (i.e., the same weights and architecture). Each agent inputs its local observation (e.g., lane densities at its intersection) into this shared policy, which outputs an action (e.g., switch to the next phase).
 - **How It Works**: Each light feeds its local observation to the shared policy, which outputs an action. The policy updates based on all agents’ rewards, averaged or combined.
 - **Pros**:
   - Efficient; one model serves all agents, reducing memory/compute needs.
@@ -74,4 +74,33 @@
   - For tiny tests, try **Fully Centralized**, but switch back for scale.
   - Avoid **Independent Learners**.
 - **Focus**: Tune the shared policy (e.g., adjust `entropy_coeff` for exploration) and reward function to enhance cooperation. Monitor `episode_reward_mean` to ensure network-wide improvement.
+
+## Current Setup
+In the current RLlib configuration (in Config.multi_agent())
+
+```py
+policies={'shared_policy': (None, None, None, {})}, policy_mapping_fn=lambda agent_id: 'shared_policy'
+```
+
+both parameter sharing and CTDE are employed because they complement each other in a cooperative MARL setting like TSC. 
+
+Here’s how they integrate:
+
+> Parameter Sharing as the Core Mechanism:
+
+The setup uses a single shared_policy for all traffic lights. This means the same neural network weights are applied to each agent’s local observation to produce actions. This is the "parameter sharing" part.
+Example: Light 1 and Light 2 both use the same policy to decide phases based on their respective lane data, trained on all agents’ experiences.
+
+
+> CTDE as the Training Strategy:
+
+RLlib’s PPO implementation, by default, supports CTDE when using a shared policy. During training, the algorithm collects data from all agents (e.g., their observations, actions, and rewards) and uses a centralized value function to compute advantages. This value function can consider the global state (implicitly through the shared policy’s updates across agents) to stabilize learning.
+At execution (e.g., during algo.evaluate()), each agent uses only its local observation to act, making it decentralized.
+Example: The policy learns that a green phase at one light might reduce waiting time network-wide, guided by the centralized training data, but each light decides based on its own traffic.
+
+
+How They Overlap:
+
+Parameter sharing is a specific implementation choice within the CTDE framework. The shared policy acts as the decentralized execution component, while the training process leverages centralized data aggregation (all agents’ rollouts) to update that single policy.
+In RLlib, the default PPO setup with a shared policy automatically incorporates CTDE because it pools experiences across agents to train the shared model, aligning with the cooperative goal of minimizing total delay (e.g., via diff-waiting-time reward).
 
