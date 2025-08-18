@@ -26,51 +26,43 @@ class AlgoConfig:
             config = None was added to make this compatible with the lambda in registry (:
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
-
-    def _attach_name(self, config, name: str):
-        """
-            Store algorithm name on this builder and the returned config object.
-        """
-        self.algo_name = name
-        setattr(config, "algo_name", name)   # for ppo_config.algo_name
-        return config
     
     # All algo. configs.
 
     # ! 1) PPO
     def get_ppo_config(self, ppo_hparams: dict):
+        # set name
+        self.algo_name = "PPO"
+
         return (
-            self._attach_name(
-                config = (
-                    PPOConfig() # ! This structure is called method chaining fyi 
-                    .environment(
-                        env = "sumo_multi_agent",
-                        env_config = self.env_config
-                    )
-                    .framework('torch')
-                    .env_runners(
-                        num_env_runners = 2, # num of parallel runners
-                        rollout_fragment_length = 200 # episodes are broken down into chunks of this size
-                    )
-                    .training(
-                        **ppo_hparams, # unpack the training hyperparams
-                        # other args..
-                        #..
-                    )
-                    .multi_agent(
-                        policies = {},
-                        #policy_mapping_fn =
-                    )
-                    .resources(num_gpus = 1)
-                    .reporting() # for logging and storing metrics (need to check)
-                ),
-                name = "PPO"
+            
+            PPOConfig() # ! This structure is called method chaining fyi 
+            .environment(
+                env = "sumo_multi_agent",
+                env_config = self.env_config
             )
+            .framework('torch')
+            .env_runners(
+                num_env_runners = 2, # num of parallel runners
+                rollout_fragment_length = 200 # episodes are broken down into chunks of this size
+            )
+            .training(
+                **ppo_hparams, # unpack the training hyperparams
+                # other args..
+                #..
+            )
+            .multi_agent(
+                policies = {},
+                #policy_mapping_fn =
+            )
+            .resources(num_gpus = 1)
+            .reporting() # for logging and storing metrics (need to check)
+                
         )
 
     # ! 2) DQN 
     def get_dqn_config(self, dqn_hparams: dict):
-        # add name attribute to class
+        # set name
 
 
         pass
