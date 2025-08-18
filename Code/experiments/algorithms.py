@@ -16,11 +16,11 @@ class AlgoConfigFactory:
         # register the env
         register_env(
             name = "sumo_multi_agent",
-            env_creator = lambda config : ParallelPettingZooEnv(self.create_env(config))
+            env_creator = lambda config : ParallelPettingZooEnv(self._create_env(config))
         )
 
-    # create env
-    def create_env(self, config = None):
+    # create env (helper)
+    def _create_env(self, config = None):
         """
             Create a parallel env in SUMO.
             config = None was added to make this compatible with the lambda in registry (:
