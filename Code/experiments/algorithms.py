@@ -5,7 +5,7 @@ from ray.tune.registry import register_env
 import sumo_rl # type: ignore
 
 
-class AlgoConfig:
+class AlgoConfigFactory:
     """
         Common class to define ray rl algorithms. 
     """
