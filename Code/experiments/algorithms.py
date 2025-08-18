@@ -11,7 +11,6 @@ class AlgoConfigFactory:
     """
     def __init__(self, env_config: dict): # no need to pass algo specific args here. add them in each separate method below.
         self.env_config = env_config
-        self.algo_name: str | None = None # set when a getter is called 
 
         # register the env
         register_env(
@@ -31,8 +30,6 @@ class AlgoConfigFactory:
 
     # ! 1) PPO
     def get_ppo_config(self, ppo_hparams: dict):
-        # set name
-        self.algo_name = "PPO"
 
         return (
             
@@ -62,7 +59,6 @@ class AlgoConfigFactory:
 
     # ! 2) DQN 
     def get_dqn_config(self, dqn_hparams: dict):
-        # set name
 
 
         pass
