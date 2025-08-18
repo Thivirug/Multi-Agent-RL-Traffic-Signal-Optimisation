@@ -1,16 +1,17 @@
 # Training logic for multi-agents 
 
 from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams
-from Code.experiments.algorithms import RL_Algorithms
+from Code.experiments.algorithms import AlgoConfig
 
 import ray
 
 class Trainer:
-    def __init__(self):
-        pass
+    def __init__(self, algo_config: AlgoConfig):
+        self.algo_config = algo_config
         # init ray
 
-
+        # build algo
+        
     # 
 
 
@@ -31,5 +32,13 @@ class Trainer:
 
 
 if __name__ == 'main':
-    # train
+    # AlgoConfig obj
+
+
+    # pass needed algo config dict
+
+
+    # create Trainer obj
+
+
     pass
