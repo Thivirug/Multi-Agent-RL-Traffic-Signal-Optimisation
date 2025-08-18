@@ -6,16 +6,15 @@ from Code.experiments.algorithms import AlgoConfigFactory
 import ray
 
 class Trainer:
-    def __init__(self, algo_config: AlgoConfigFactory):
-        self.algo_config = algo_config
+    def __init__(self, algo_factory: AlgoConfigFactory):
+        self.algo_factory = algo_factory
         # init ray
 
         # build algo
         
     # build required algo 
-    def _build(self, hparams: dict):
-        # get config
-        config 
+    
+
 
 
 
