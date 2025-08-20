@@ -35,7 +35,7 @@ def main():
 
         # checkpoint every freq-th iter
         if i % checkpoint_freq == 0:
-            chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}") 
+            chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i}") 
             os.makedirs(chkpoint_dir, exist_ok=True)
             chkpoint_path = algo.save_to_path(chkpoint_dir)
             print(f"Checkpoint saved to {chkpoint_path}")

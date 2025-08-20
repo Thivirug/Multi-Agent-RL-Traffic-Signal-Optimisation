@@ -14,5 +14,5 @@ __pycache__/
 # System files
 .DS_Store
 
-# checkpoints
-Code/outputs/checkpoints/
+#outputs
+Code/outputs/
