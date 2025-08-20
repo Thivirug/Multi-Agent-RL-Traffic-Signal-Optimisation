@@ -1,8 +1,8 @@
 # Configurations for multi-agent environment (Pettingzoo) and model training hyperparams
 
 # ! Other config vars needed
-n_iterations = 1000 # num of training iterations
-checkpoint_freq = 10 # checkpointing freq
+n_iterations = 10 # num of training iterations
+checkpoint_freq = 5 # checkpointing freq
 
 # ! ------- ENV CONFIG -------
 # Parameters in sumo_rl.parallel_env 
@@ -11,7 +11,7 @@ checkpoint_freq = 10 # checkpointing freq
 ENV_CONFIG = {
     'net_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml",
     'route_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml",
-    'out_csv_name': "outputs/logs",
+    'out_csv_name': "Code/outputs/logs",
     'use_gui': False,
     'num_seconds': 36000,
     # add more .. if needed
@@ -21,7 +21,12 @@ ENV_CONFIG = {
 
 # PPO
 PPO_hparams = {
-
+    'lr': 0.0001,
+    'train_batch_size': 4000,
+    'entropy_coeff': 0.01,
+    'kl_coeff':0.2,
+    'clip_param':0.2,
+    'vf_clip_param':10.0
 }
 
 # DQN 

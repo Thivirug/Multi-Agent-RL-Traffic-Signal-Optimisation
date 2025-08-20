@@ -45,15 +45,13 @@ class AlgoConfigFactory:
             )
             .training(
                 **ppo_hparams, # unpack the training hyperparams
-                # other args..
-                #..
             )
             .multi_agent(
-                policies = {},
-                #policy_mapping_fn =
+                policies={"shared_policy": (None, None, None, {})},
+                policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
             )
             .resources(num_gpus = 1)
-            .reporting() # for logging and storing metrics (need to check)
+            .reporting(min_time_s_per_iteration=5) # for logging and storing metrics (need to check)
                 
         )
 
