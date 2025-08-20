@@ -1,4 +1,5 @@
 # Configurations for multi-agent environment (Pettingzoo) and model training hyperparams
+import os
 
 # ! Other config vars needed
 n_iterations = 10 # num of training iterations
@@ -11,7 +12,7 @@ checkpoint_freq = 5 # checkpointing freq
 ENV_CONFIG = {
     'net_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml",
     'route_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml",
-    'out_csv_name': "Code/outputs/logs",
+    'out_csv_name': os.path.abspath("Code/outputs/logs"),
     'use_gui': False,
     'num_seconds': 36000,
     # add more .. if needed
