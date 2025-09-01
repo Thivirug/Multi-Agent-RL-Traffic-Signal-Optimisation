@@ -2,8 +2,8 @@
 import os
 
 # ! Other config vars needed
-n_iterations = 10 # num of training iterations
-checkpoint_freq = 5 # checkpointing freq
+n_iterations = 4 # num of training iterations
+checkpoint_freq = 2 # checkpointing freq
 
 # ! ------- ENV CONFIG -------
 # Parameters in sumo_rl.parallel_env 

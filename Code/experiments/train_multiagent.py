@@ -25,7 +25,7 @@ def main():
         # other one
 
     # build config
-    algo = config.build()
+    algo = config.build_algo()
 
     # training loop
     for i in range(n_iterations):
@@ -42,9 +42,5 @@ def main():
 
     # close ray
     ray.shutdown()
-
-
-# if __name__ == 'main':
-#     main()
 
 main()
