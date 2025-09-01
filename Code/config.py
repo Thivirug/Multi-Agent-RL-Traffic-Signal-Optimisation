@@ -22,8 +22,11 @@ ENV_CONFIG = {
 
 # PPO
 PPO_hparams = {
-    'lr': 0.0001,
-    'train_batch_size': 4000,
+    'lr': [
+        [0, 1e-5],  # <- initial value at timestep 0
+        [100000, 1e-2],  # <- final value at .. timesteps
+    ],
+    'train_batch_size_per_learner': 512,
     'entropy_coeff': 0.01,
     'kl_coeff':0.2,
     'clip_param':0.2,

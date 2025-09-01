@@ -3,15 +3,23 @@
 from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, n_iterations, checkpoint_freq
 from algorithms import AlgoConfigFactory
 
+from ray.tune.registry import register_env # for evaluate()
+from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
+
 import ray
 import os
 
 def main():
     # init ray
-    ray.init(ignore_reinit_error = True) # allow re-initialisation
-
+    ray.init() # allow re-initialisation
+    
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
+
+    register_env(
+        name = "sumo_multi_agent",
+        env_creator = lambda config: ParallelPettingZooEnv(factory._create_env(config))
+    )
     
     # get algo config 
     algo_name = input("Training algorithm: --> ")
@@ -30,8 +38,11 @@ def main():
     # training loop
     for i in range(n_iterations):
         result = algo.train()
-        # print(f"Iteration {i}: Reward = {result['episode_reward_mean']:.5f}")
-        print(result)
+        # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
+        # print(type(result))
+        
+        print(algo.evaluate().keys())
+        break
 
         # checkpoint every freq-th iter
         if i % checkpoint_freq == 0:

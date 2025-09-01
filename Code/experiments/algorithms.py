@@ -41,7 +41,7 @@ class AlgoConfigFactory:
             .framework('torch')
             .env_runners(
                 num_env_runners = 2, # num of parallel runners
-                rollout_fragment_length = 200 # episodes are broken down into chunks of this size
+                # rollout_fragment_length = 200 # episodes are broken down into chunks of this size
             )
             .training(
                 **ppo_hparams, # unpack the training hyperparams
@@ -50,8 +50,11 @@ class AlgoConfigFactory:
                 policies={"shared_policy": (None, None, None, {})},
                 policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
             )
-            .resources(num_gpus = 1)
-            .reporting(min_time_s_per_iteration=5) # for logging and storing metrics (need to check)
+            .learners(
+                num_learners=1,
+                num_gpus_per_learner=1
+            )
+            # .reporting(min_time_s_per_iteration=5) # for logging and storing metrics (need to check)
                 
         )
 
