@@ -12,11 +12,11 @@ class AlgoConfigFactory:
     def __init__(self, env_config: dict): # no need to pass algo specific args here. add them in each separate method below.
         self.env_config = env_config
 
-        # register the env
-        register_env(
-            name = "sumo_multi_agent",
-            env_creator = lambda config : ParallelPettingZooEnv(self._create_env(config))
-        )
+        # # register the env
+        # register_env(
+        #     name = "sumo_multi_agent",
+        #     env_creator = lambda config : ParallelPettingZooEnv(self._create_env(config))
+        # )
 
     # create env (helper)
     def _create_env(self, config = None):
@@ -40,7 +40,7 @@ class AlgoConfigFactory:
             )
             .framework('torch')
             .env_runners(
-                num_env_runners = 2, # num of parallel runners
+                num_env_runners = 1, # num of parallel runners
                 # rollout_fragment_length = 200 # episodes are broken down into chunks of this size
             )
             .training(
@@ -52,7 +52,7 @@ class AlgoConfigFactory:
             )
             .learners(
                 num_learners=1,
-                num_gpus_per_learner=1
+                # num_gpus_per_learner=0
             )
             # .reporting(min_time_s_per_iteration=5) # for logging and storing metrics (need to check)
                 
