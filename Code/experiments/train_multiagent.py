@@ -40,9 +40,6 @@ def main():
         result = algo.train()
         # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
         # print(type(result))
-        
-        print(algo.evaluate().keys())
-        break
 
         # checkpoint every freq-th iter
         if i % checkpoint_freq == 0:
