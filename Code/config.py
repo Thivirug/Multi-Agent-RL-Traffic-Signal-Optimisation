@@ -10,8 +10,8 @@ checkpoint_freq = 2 # checkpointing freq
 # TODO : Get params starting from Line 93 in sumo-rl/sumo_rl/environment/env.py
 
 ENV_CONFIG = {
-    'net_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml",
-    'route_file': "sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml",
+    'net_file': "src/sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml",
+    'route_file': "src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml",
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
     'num_seconds': 36000,
