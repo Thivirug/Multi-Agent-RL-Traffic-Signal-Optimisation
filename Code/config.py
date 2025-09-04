@@ -30,7 +30,8 @@ PPO_hparams = {
     'entropy_coeff': 0.01,
     'kl_coeff':0.2,
     'clip_param':0.2,
-    'vf_clip_param':10.0
+    'vf_clip_param':10.0,
+    'gamma': 0.9
 }
 
 # DQN 

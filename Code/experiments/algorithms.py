@@ -43,19 +43,28 @@ class AlgoConfigFactory:
                 num_env_runners = 1, # num of parallel runners
                 # rollout_fragment_length = 200 # episodes are broken down into chunks of this size
             )
+            .learners(
+                num_learners=1,
+            )
             .training(
                 **ppo_hparams, # unpack the training hyperparams
+            )
+            .evaluation(
+
             )
             .multi_agent(
                 policies={"shared_policy": (None, None, None, {})},
                 policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
             )
-            .learners(
-                num_learners=1,
-                # num_gpus_per_learner=0
-            )
-            # .reporting(min_time_s_per_iteration=5) # for logging and storing metrics (need to check)
-                
+            .rl_module(
+                rl_module_spec=MultiRLModuleSpec(
+                    # All agents (0 and 1) use the same (single) RLModule.
+                    # rl_module_specs=RLModuleSpec(
+                    #     module_class=MyRLModuleClass,
+                    #     model_config={"some_key": "some_setting"},
+                    # )
+                )
+            )   
         )
 
     # ! 2) DQN 
