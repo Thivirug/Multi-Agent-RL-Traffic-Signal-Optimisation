@@ -88,10 +88,18 @@ class AlgoConfigFactory:
     def __init__(self, env_config: dict):
         self.env_config = env_config
 
+<<<<<<< HEAD
     def _create_env(self, config=None):
         """
         Create a parallel env in SUMO.
         config = None was added to make this compatible with the lambda in registry
+=======
+    # create env (helper)
+    def _create_env(self, config = None):
+        """
+            Create a parallel env in SUMO.
+            config = None was added to make this compatible with the lambda in registry
+>>>>>>> f111cd9a3eebfa60a7ef88df8477c4418d92b1ec
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
     
