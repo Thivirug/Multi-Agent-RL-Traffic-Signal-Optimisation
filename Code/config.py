@@ -110,8 +110,8 @@ checkpoint_freq = 10  # Checkpointing frequency
 # ! ------- ENV CONFIG -------
 # Parameters for sumo_rl.parallel_env
 ENV_CONFIG = {
-    'net_file': 'src/sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml',
-    'route_file': 'src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml',
+    'net_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml'),
+    'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
     'num_seconds': 80000,      # Total simulation time
