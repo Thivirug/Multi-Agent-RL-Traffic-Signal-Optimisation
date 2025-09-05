@@ -12,17 +12,11 @@ class AlgoConfigFactory:
     def __init__(self, env_config: dict): # no need to pass algo specific args here. add them in each separate method below.
         self.env_config = env_config
 
-        # # register the env
-        # register_env(
-        #     name = "sumo_multi_agent",
-        #     env_creator = lambda config : ParallelPettingZooEnv(self._create_env(config))
-        # )
-
     # create env (helper)
     def _create_env(self, config = None):
         """
             Create a parallel env in SUMO.
-            config = None was added to make this compatible with the lambda in registry (:
+            config = None was added to make this compatible with the lambda in registry
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
     

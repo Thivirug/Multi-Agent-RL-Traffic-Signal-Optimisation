@@ -5,6 +5,7 @@ from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
+from ray import tune
 
 import ray
 import os
@@ -53,7 +54,36 @@ def main():
     #         chkpoint_path = algo.save_to_path(chkpoint_dir)
     #         print(f"Checkpoint saved to {chkpoint_path}")
 
+
     # ! Use Tuner
+
+    # Stop when we've either reached 100 training iterations or reward=300
+    stopping_criteria = {"training_iteration": 5}
+    
+    tuner = tune.Tuner(
+        "PPO",
+        tune_config=tune.TuneConfig(
+            metric="env_runners/episode_return_mean",
+            mode="max",
+        ),
+        param_space=config,
+        run_config=tune.RunConfig(stop=stopping_criteria),
+    )
+    results = tuner.fit()
+    
+    import pprint
+
+    best_result = results.get_best_result()
+
+    print("\nBest performing trial's final reported metrics:\n")
+
+    metrics_to_print = [
+        "episode_reward_mean",
+        "episode_reward_max",
+        "episode_reward_min",
+        "episode_len_mean",
+    ]
+    pprint.pprint({k: v for k, v in best_result.metrics.items() if k in metrics_to_print})
 
     # close ray
     ray.shutdown()
