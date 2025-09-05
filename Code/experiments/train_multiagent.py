@@ -33,25 +33,27 @@ def main():
             config = factory.get_dqn_config(DQN_hparams)
         # other one
 
-    # build config
-    algo = config.build()
+    # # build config
+    # algo = config.build()
 
-    # training loop
-    for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps
-        results = algo.train()
-        # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
-        # print(type(result))
-        mean_return = results["env_runners"].get(
-                    "episode_return_mean", np.nan
-                )
-        print(f"\titer={i} R={mean_return}\n")
+    # # training loop
+    # for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps
+    #     results = algo.train()
+    #     # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
+    #     # print(type(result))
+    #     mean_return = results["env_runners"].get(
+    #                 "episode_return_mean", np.nan
+    #             )
+    #     print(f"\titer={i} R={mean_return}\n")
 
-        # checkpoint every freq-th iter
-        if i % checkpoint_freq == 0:
-            chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i}") 
-            os.makedirs(chkpoint_dir, exist_ok=True)
-            chkpoint_path = algo.save_to_path(chkpoint_dir)
-            print(f"Checkpoint saved to {chkpoint_path}")
+    #     # checkpoint every freq-th iter
+    #     if i % checkpoint_freq == 0:
+    #         chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i}") 
+    #         os.makedirs(chkpoint_dir, exist_ok=True)
+    #         chkpoint_path = algo.save_to_path(chkpoint_dir)
+    #         print(f"Checkpoint saved to {chkpoint_path}")
+
+    # ! Use Tuner
 
     # close ray
     ray.shutdown()

@@ -49,22 +49,22 @@ class AlgoConfigFactory:
             .training(
                 **ppo_hparams, # unpack the training hyperparams
             )
-            .evaluation(
+            # .evaluation(
 
-            )
+            # )
             .multi_agent(
                 policies={"shared_policy": (None, None, None, {})},
                 policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
             )
-            .rl_module(
-                rl_module_spec=MultiRLModuleSpec(
-                    # All agents (0 and 1) use the same (single) RLModule.
-                    # rl_module_specs=RLModuleSpec(
-                    #     module_class=MyRLModuleClass,
-                    #     model_config={"some_key": "some_setting"},
-                    # )
-                )
-            )   
+            # .rl_module(
+            #     rl_module_spec=MultiRLModuleSpec(
+            #         # All agents (0 and 1) use the same (single) RLModule.
+            #         # rl_module_specs=RLModuleSpec(
+            #         #     module_class=MyRLModuleClass,
+            #         #     model_config={"some_key": "some_setting"},
+            #         # )
+            #     )
+            # )   
         )
 
     # ! 2) DQN 
