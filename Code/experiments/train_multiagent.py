@@ -12,8 +12,8 @@ import os
 import numpy as np
 
 def main():
-    # init ray
-    ray.init() 
+    # # init ray
+    # ray.init() 
     
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
@@ -71,7 +71,18 @@ def main():
     # )
     # results = tuner.fit()
     
-    # import pprint
+    import pprint
+    # training loop
+    for i in range(1): # 1 iteration =  "train_batch_size_per_learner" timesteps
+        results = algo.train()
+        # # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
+        # # print(type(result))
+        # mean_return = results["env_runners"].get(
+        #             "episode_return_mean", np.nan
+        #         )
+        # print(f"\titer={i} R={mean_return}\n")
+    
+    pprint.pprint(algo.evaluate())
 
     # best_result = results.get_best_result()
 
@@ -88,6 +99,7 @@ def main():
     # pprint.pprint({k: v for k, v in best_result.metrics.items() if k in metrics_to_print})
 
     # close ray
-    ray.shutdown()
+    algo.stop()
+    # ray.shutdown()
 
 main()
