@@ -13,7 +13,7 @@ import numpy as np
 
 def main():
     # init ray
-    ray.init() # allow re-initialisation
+    ray.init() 
     
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
@@ -34,8 +34,8 @@ def main():
             config = factory.get_dqn_config(DQN_hparams)
         # other one
 
-    # # build config
-    # algo = config.build()
+    # build config
+    algo = config.build()
 
     # # training loop
     # for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps
@@ -55,35 +55,37 @@ def main():
     #         print(f"Checkpoint saved to {chkpoint_path}")
 
 
-    # ! Use Tuner
+    # # ! Use Tuner
 
-    # Stop when we've either reached 100 training iterations or reward=300
-    stopping_criteria = {"training_iteration": 5}
+    # # Stop when we've either reached 100 training iterations or reward=300
+    # stopping_criteria = {"training_iteration": 5}
     
-    tuner = tune.Tuner(
-        "PPO",
-        tune_config=tune.TuneConfig(
-            metric="env_runners/episode_return_mean",
-            mode="max",
-        ),
-        param_space=config,
-        run_config=tune.RunConfig(stop=stopping_criteria),
-    )
-    results = tuner.fit()
+    # tuner = tune.Tuner(
+    #     "PPO",
+    #     tune_config=tune.TuneConfig(
+    #         metric="episode_return_mean",
+    #         mode="max",
+    #     ),
+    #     param_space=config,
+    #     run_config=tune.RunConfig(stop=stopping_criteria),
+    # )
+    # results = tuner.fit()
     
-    import pprint
+    # import pprint
 
-    best_result = results.get_best_result()
+    # best_result = results.get_best_result()
 
-    print("\nBest performing trial's final reported metrics:\n")
+    # pprint.pprint(best_result)
 
-    metrics_to_print = [
-        "episode_reward_mean",
-        "episode_reward_max",
-        "episode_reward_min",
-        "episode_len_mean",
-    ]
-    pprint.pprint({k: v for k, v in best_result.metrics.items() if k in metrics_to_print})
+    # print("\nBest performing trial's final reported metrics:\n")
+
+    # metrics_to_print = [
+    #     "episode_reward_mean",
+    #     "episode_reward_max",
+    #     "episode_reward_min",
+    #     "episode_len_mean",
+    # ]
+    # pprint.pprint({k: v for k, v in best_result.metrics.items() if k in metrics_to_print})
 
     # close ray
     ray.shutdown()

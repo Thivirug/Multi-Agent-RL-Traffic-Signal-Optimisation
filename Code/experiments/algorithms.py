@@ -155,7 +155,7 @@ class AlgoConfigFactory:
             policies=policies,
             policy_mapping_fn=lambda agent_id, *args, **kwargs: f"policy_{agent_id}",
             # Enable centralized critic
-            policies_to_train=list(policies.keys())
+            policies_to_train=None
         )
 
         # else:
