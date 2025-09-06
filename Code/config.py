@@ -165,8 +165,8 @@ DQN_hparams = {
     "n_step": 1,                   # N-step returns
 }
 
-# # Algorithm selection mapping
-# ALGORITHM_CONFIGS = {
-#     'ppo': PPO_hparams,
-#     'dqn': DQN_hparams,
-# }
+# Algorithm selection mapping
+ALGO_HPARAMS = {
+    'ppo': PPO_hparams,
+    'dqn': DQN_hparams,
+}
