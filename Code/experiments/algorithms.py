@@ -116,58 +116,35 @@ class AlgoConfigFactory:
         Create PPO configuration with CTDE support
         """
         obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
-        
+    
         config = (
             PPOConfig()
-            .environment(
-                env="sumo_multi_agent",
-                env_config=self.env_config
-            )
+            .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .env_runners(
-                num_env_runners=1
-            )
-            .learners(
-                num_learners=1,
-            )
-            .training(
-                **ppo_hparams,
-            )
+            .env_runners(num_env_runners=1)
+            .learners(num_learners=1)
+            .training(**ppo_hparams)
             .evaluation(
                 evaluation_interval=10,
                 evaluation_duration=10,
-                evaluation_config={
-                    "env_config": self.env_config,
-                }
+                evaluation_config={"env_config": self.env_config}
             )
         )
 
-        # CTDE: Centralized Training with shared policy but individual value functions
-        policies = {}
-        for agent_id in agent_ids:
-            policies[f"policy_{agent_id}"] = PolicySpec(
-                observation_space=obs_space,
-                action_space=action_space,
-                config={"agent_id": agent_id}
-            )
+        # CTDE: Single shared policy for all agents (parameter sharing)
+        # Training aggregates rollouts from all agents (centralized).
+        # Execution: Each agent inputs its local observation to the shared policy (decentralized).
+        shared_policy_spec = PolicySpec(
+            observation_space=obs_space,
+            action_space=action_space,
+            config={}  
+        )
         
         config = config.multi_agent(
-            policies=policies,
-            policy_mapping_fn=lambda agent_id, *args, **kwargs: f"policy_{agent_id}",
-            # Enable centralized critic
-            policies_to_train=None
+            policies={"shared_policy": shared_policy_spec},
+            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
         )
 
-        # else:
-        #     # Simple parameter sharing
-        #     config = config.multi_agent(
-        #         policies={"shared_policy": PolicySpec(
-        #             observation_space=obs_space,
-        #             action_space=action_space,
-        #         )},
-        #         policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
-        #     )
-        
         return config
 
     # def get_dqn_config(self, dqn_hparams: dict):
