@@ -73,8 +73,8 @@ def main():
     
     import pprint
     # training loop
-    for i in range(1): # 1 iteration =  "train_batch_size_per_learner" timesteps
-        results = algo.train()
+    for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
+        algo.train()
         # # print(f"Iteration {i}: Reward = {result['policy_reward_mean']:.5f}")
         # # print(type(result))
         # mean_return = results["env_runners"].get(
@@ -82,7 +82,16 @@ def main():
         #         )
         # print(f"\titer={i} R={mean_return}\n")
     
-    pprint.pprint(algo.evaluate())
+        result = algo.evaluate()
+
+        pprint.pprint(f"/n/tIteration {i}: Mean Reward = {result['env_runners']['episode_return_mean']:.5f}")
+
+        # checkpoint every freq-th iter
+        if i % checkpoint_freq == 0:
+            chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i}") 
+            os.makedirs(chkpoint_dir, exist_ok=True)
+            chkpoint_path = algo.save_to_path(chkpoint_dir)
+            print(f"/nCheckpoint saved to {chkpoint_path}/n")
 
     # best_result = results.get_best_result()
 
