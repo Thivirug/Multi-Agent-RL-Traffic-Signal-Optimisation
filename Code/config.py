@@ -130,9 +130,9 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
-    'lr':2e-4,                    # Learning rate
+    'lr':2e-5,                    # Learning rate
     'train_batch_size_per_learner': 128,  # Batch size per learner
-    'entropy_coeff': 0.01,         # Entropy coefficient for exploration
+    'entropy_coeff': 0.1,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter
     'vf_clip_param': 10.0,         # Value function clipping parameter

@@ -17,14 +17,14 @@ def rename_logs(iter_n: int):
     """
         Rename the .csv log files to include iteration number
     """
-    logs_dir = os.abspath("Code/outputs/logs")
+    logs_dir = os.path.abspath("Code/outputs/logs")
     pattern = re.compile(r"(logs_conn\d+_ep\d+)\.csv")
 
     for filename in os.listdir(logs_dir):
         match = pattern.match(filename)
-        if match and not f"_iter{iter_n + 1}" in filename:
+        if match and not f"_iter{iter_n}" in filename: # iter_n + 1 is not used to avoid a file naming error in sumo
             base = match.group(1)
-            new_filename = f"{base}_iter{iter_n + 1}.csv"
+            new_filename = f"{base}_iter{iter_n}.csv"
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
 def main():
