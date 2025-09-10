@@ -61,7 +61,8 @@ def main():
         rename_logs(i)
     
         result = algo.evaluate()
-
+        
+        # ! MIGHT NEED TO SAVE TO JSON
         print(f"\n\tIteration {i+1}: Mean Reward = {result['env_runners']['episode_return_mean']:.5f}\n")
 
         # checkpoint every freq-th iter
