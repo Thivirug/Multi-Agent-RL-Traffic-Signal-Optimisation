@@ -71,7 +71,6 @@ def main():
     # )
     # results = tuner.fit()
     
-    import pprint
     # training loop
     for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
         algo.train()
@@ -84,7 +83,7 @@ def main():
     
         result = algo.evaluate()
 
-        pprint.pprint(f"/n/tIteration {i}: Mean Reward = {result['env_runners']['episode_return_mean']:.5f}")
+        print(f"\n\tIteration {i}: Mean Reward = {result['env_runners']['episode_return_mean']:.5f}\n")
 
         # checkpoint every freq-th iter
         if i % checkpoint_freq == 0:

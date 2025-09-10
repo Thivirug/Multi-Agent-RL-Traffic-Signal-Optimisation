@@ -105,7 +105,7 @@ import os
 
 # ! Training config vars
 n_iterations = 100  # Increased for more meaningful training
-checkpoint_freq = 10  # Checkpointing frequency
+checkpoint_freq = 5  # Checkpointing frequency
 
 # ! ------- ENV CONFIG -------
 # Parameters for sumo_rl.parallel_env
@@ -130,8 +130,8 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
-    'lr': 3e-4,                    # Learning rate
-    'train_batch_size_per_learner': 512,  # Batch size per learner
+    'lr':2e-4,                    # Learning rate
+    'train_batch_size_per_learner': 128,  # Batch size per learner
     'entropy_coeff': 0.01,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter
