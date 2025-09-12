@@ -117,20 +117,20 @@ ENV_CONFIG = {
     'num_seconds': 1800,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
     'yellow_time': 3,          # Length of yellow phase
-    'min_green': 5,            # Minimum green time
+    'min_green': 8,            # Minimum green time
     'max_green': 60,           # Maximum green time
     'single_agent': False,     # Multi-agent setup
     'reward_fn': 'diff-waiting-time',  # Reward function for traffic optimization
     'add_per_agent_info': True,
     'add_system_info': True,   # Add system-wide information for centralized training
-    'sumo_seed': 'random',     # Randomize traffic patterns
+    'sumo_seed': 'random',     # Randomize traffic patterns # ! makes the algo more robust
 }
 
 # ! ------- Algorithm hyperparams -------
 
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
-    'lr':2e-5,                    # Learning rate
+    'lr':1e-4,                    # Learning rate
     'train_batch_size_per_learner': 128,  # Batch size per learner
     'entropy_coeff': 0.1,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient
