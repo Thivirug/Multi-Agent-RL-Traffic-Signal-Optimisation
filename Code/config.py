@@ -114,7 +114,7 @@ ENV_CONFIG = {
     'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
-    'num_seconds': 2000,      # Total simulation time
+    'num_seconds': 3600,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
     'yellow_time': 3,          # Length of yellow phase
     'min_green': 8,            # Minimum green time
@@ -130,7 +130,7 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
-    'lr':1e-4,                    # Learning rate
+    'lr':2e-5,                    # Learning rate
     'train_batch_size_per_learner': 128,  # Batch size per learner
     'entropy_coeff': 0.1,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient
