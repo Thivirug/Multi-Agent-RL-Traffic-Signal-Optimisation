@@ -27,3 +27,13 @@ project_root/
 ├── README.md              # Update with project notes
 └── requirements.txt       # Core dependencies (e.g., ray[rllib], gymnasium)
 ```
+
+My Setup differnces
+- since using windows OS I am unable to run cuda version that supports uvlib in pytorch this disallows me to use:
+    .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
+    .learners(num_learners=2, num_cpus_per_learner=5)
+so cant train in parellel. However i instead just use:
+    .api_stack(enable_rl_module_and_learner=False, enable_env_runner_and_connector_v2=False)
+    .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
+    .learners(num_learners=1, num_cpus_per_learner=4, num_gpus_per_learner=1)
+one single thread learner.
