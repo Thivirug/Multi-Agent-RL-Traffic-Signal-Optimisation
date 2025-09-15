@@ -1,4 +1,9 @@
 # Training logic for multi-agents 
+import sys
+import os
+# Add the project root to Python path
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, project_root)
 
 from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, n_iterations, checkpoint_freq
 from algorithms import AlgoConfigFactory

@@ -110,8 +110,8 @@ checkpoint_freq = 5  # Checkpointing frequency
 # ! ------- ENV CONFIG -------
 # Parameters for sumo_rl.parallel_env
 ENV_CONFIG = {
-    'net_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml'),
-    'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
+    'net_file': os.path.abspath('venv_py312/src/sumo-rl/sumo_rl/nets/2x2grid/2x2.net.xml'),
+    'route_file': os.path.abspath('venv_py312/src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
     'num_seconds': 3600,      # Total simulation time
@@ -131,7 +131,7 @@ ENV_CONFIG = {
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
     'lr':2e-5,                    # Learning rate
-    'train_batch_size_per_learner': 128,  # Batch size per learner
+    'train_batch_size_per_learner': 512,  # Batch size per learner
     'entropy_coeff': 0.1,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter

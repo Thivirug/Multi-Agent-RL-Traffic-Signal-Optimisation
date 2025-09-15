@@ -121,8 +121,14 @@ class AlgoConfigFactory:
             PPOConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
-            .learners(num_learners=1)
+            .api_stack(
+                enable_rl_module_and_learner=False,
+                enable_env_runner_and_connector_v2=False
+            )
+            .resources(
+                num_gpus=1,  # Use 1 GPU for training
+                num_cpus_per_worker=1
+            )
             .training(**ppo_hparams)
             .evaluation(
                 evaluation_interval=10,
