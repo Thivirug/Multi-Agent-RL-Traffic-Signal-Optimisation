@@ -2,7 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, TRAIN_DICT
+from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, ARG_DICT
 from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
@@ -58,8 +58,8 @@ def main():
             config = factory.get_sac_config(SAC_hparams)
 
     # use algorithm specific args
-    n_iterations = TRAIN_DICT[algo_name]
-    checkpoint_freq = TRAIN_DICT[algo_name]
+    n_iterations = ARG_DICT[algo_name]
+    checkpoint_freq = ARG_DICT[algo_name]
 
     # build config
     algo = config.build()

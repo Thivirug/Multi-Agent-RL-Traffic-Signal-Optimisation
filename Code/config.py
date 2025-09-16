@@ -2,7 +2,7 @@
 import os
 
 # ! Training config vars
-TRAIN_DICT = {
+ARG_DICT = {
     "ppo" : {
         400, # ! n_iterations
         20   # ! chkpoint freq
