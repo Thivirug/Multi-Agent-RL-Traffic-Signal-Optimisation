@@ -1,4 +1,7 @@
+
 # Training logic for multi-agents 
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, n_iterations, checkpoint_freq
 from algorithms import AlgoConfigFactory
@@ -9,9 +12,6 @@ from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 import os
 import re
 from tqdm import trange
-
-import warnings
-warnings.filterwarnings("ignore")
 
 import json
 

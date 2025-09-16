@@ -1,4 +1,8 @@
+
 # experiments/evaluate_multiagent.py
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import os
 import numpy as np
 from Code.config import ENV_CONFIG
@@ -7,9 +11,6 @@ from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
 import torch
-
-import warnings
-warnings.filterwarnings("ignore")
 
 
 def main(checkpoint_dir: str, max_steps: int = 20):
