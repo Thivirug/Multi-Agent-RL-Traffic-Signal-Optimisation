@@ -4,18 +4,18 @@ import os
 # ! Training config vars
 ARG_DICT = {
     "ppo" : {
-        400, # ! n_iterations
-        20   # ! chkpoint freq
+        "n_iterations": 400,   
+        "chkpoint_eval_freq": 20 # checkpointing and training eval freq
     },
 
     "dqn" : { # ! npc jake change these to wt u need !!
-        400, # ! n_iterations
-        20   # ! chkpoint freq
+        "n_iterations": 400,   
+        "chkpoint_eval_freq": 20 # checkpointing and training eval freq
     },
 
     "sac": {
-        400, # ! n_iterations
-        20   # ! chkpoint freq
+        "n_iterations": 400,   
+        "chkpoint_eval_freq": 20 # checkpointing and training eval freq
     }
 }
 
