@@ -20,7 +20,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes 
     local_config = ENV_CONFIG.copy()
     local_config.update({
         'use_gui': True,
-        'num_seconds': max_steps * 5,  # duration based on delta_time=5
+        'num_seconds': max_steps * local_config['delta_time'],  # duration based on delta_time
         'render_mode': 'human'
     })
     factory = AlgoConfigFactory(local_config)
