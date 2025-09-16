@@ -94,6 +94,7 @@ def main():
             results.append(result)
 
     # dump to json
+    print(f"\n\t Dumping Results to {json_path}...\n")
     with open(json_path, "w") as f:
         json.dump(results, f, indent=2)
 
