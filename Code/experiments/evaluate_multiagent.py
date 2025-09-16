@@ -94,4 +94,4 @@ def main(checkpoint_dir: str, max_steps: int = 20):
 
 if __name__ == "__main__":
     checkpoint_path = os.path.abspath("Code/outputs/checkpoints/ppo/200")
-    main(checkpoint_path, max_steps=2000)
+    main(checkpoint_path)
