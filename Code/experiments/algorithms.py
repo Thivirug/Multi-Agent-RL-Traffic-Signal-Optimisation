@@ -1,8 +1,11 @@
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
+# config imports
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn import DQNConfig
+from ray.rllib.algorithms.sac import SACConfig
+
 from ray.rllib.policy.policy import PolicySpec
 import sumo_rl # type: ignore
 
@@ -44,6 +47,7 @@ class AlgoConfigFactory:
         temp_env.close() 
         return obs_space, action_space, agent_ids
 
+    # ! ================== PPO ==================
     def get_ppo_config(self, ppo_hparams: dict):
         """
             Create PPO configuration with CTDE support
@@ -80,10 +84,10 @@ class AlgoConfigFactory:
 
         return config
 
-    # jake3 or npc
+    # ! ================== DQN ==================
     def get_dqn_config(self, dqn_hparams: dict):
         """
-            Create DQN configuration for multi-agent learning
+            Create DQN configuration with CTDE support.
         """
         obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
 
@@ -94,8 +98,8 @@ class AlgoConfigFactory:
             PPOConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
-            .learners(num_learners=2, num_cpus_per_learner=7)
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1) # ! CHANGE THESE FOR UR PC REQS
+            .learners(num_learners=2, num_cpus_per_learner=7) # ! CHANGE THESE FOR UR PC REQS
             .training(**dqn_hparams)
             .evaluation(
                 evaluation_interval=10,
@@ -119,9 +123,10 @@ class AlgoConfigFactory:
 
         return config
     
+    # ! ================== SAC ==================
     def get_sac_config(self, sac_hparams: dict):
         """
-            Create SAC configuration for multi-agent learning
+            Create SAC configuration with CTDE support.
         """
         obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
 
@@ -132,8 +137,8 @@ class AlgoConfigFactory:
             PPOConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
-            .learners(num_learners=2, num_cpus_per_learner=7)
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1) # ! CHANGE THESE FOR UR PC REQS
+            .learners(num_learners=2, num_cpus_per_learner=7) # ! CHANGE THESE FOR UR PC REQS
             .training(**sac_hparams)
             .evaluation(
                 evaluation_interval=10,
