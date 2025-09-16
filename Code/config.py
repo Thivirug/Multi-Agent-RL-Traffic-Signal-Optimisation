@@ -104,8 +104,8 @@
 import os
 
 # ! Training config vars
-n_iterations = 200  # Increased for more meaningful training
-checkpoint_freq = 10  # Checkpointing and eval frequency in training
+n_iterations = 400  # Increased for more meaningful training
+checkpoint_freq = 20  # Checkpointing and eval frequency in training
 
 # ! ------- ENV CONFIG -------
 # Parameters for sumo_rl.parallel_env
@@ -114,7 +114,7 @@ ENV_CONFIG = {
     'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
-    'num_seconds': 3600,      # Total simulation time
+    'num_seconds': 1800,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
     'yellow_time': 3,          # Length of yellow phase
     'min_green': 8,            # Minimum green time
@@ -130,7 +130,11 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters for CTDE
 PPO_hparams = {
-    'lr':2e-5,                    # Learning rate
+    'lr': [
+        [0, 1e-4],    # Start with 2e-5 at timestep 0
+        [30000, 1e-5],  # Decay to 1e-6 after 30k timesteps
+        [90000, 1e-6],  # Decay to 1e-6 after 90k timesteps
+    ],                 
     'train_batch_size_per_learner': 256,  # Batch size per learner
     'entropy_coeff': 0.1,         # Entropy coefficient for exploration
     'kl_coeff': 0.2,               # KL divergence coefficient

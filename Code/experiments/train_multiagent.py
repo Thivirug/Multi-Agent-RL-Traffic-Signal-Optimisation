@@ -7,8 +7,6 @@ from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 
 import os
-import numpy as np
-
 import re
 
 import warnings
