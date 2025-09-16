@@ -5,9 +5,7 @@ from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
-from ray import tune
 
-import ray
 import os
 import numpy as np
 
