@@ -11,6 +11,10 @@ import numpy as np
 
 import re
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
 def rename_logs(iter_n: int):
     """
         Rename the .csv log files to include iteration number

@@ -8,6 +8,10 @@ from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
 import torch
 
+import warnings
+warnings.filterwarnings("ignore")
+
+
 def main(checkpoint_dir: str, max_steps: int = 20):
 
     # create factory and register environment with local config override
