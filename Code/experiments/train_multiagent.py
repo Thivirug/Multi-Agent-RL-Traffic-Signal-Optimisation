@@ -2,7 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, n_iterations, checkpoint_freq
+from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, TRAIN_DICT
 from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
@@ -34,6 +34,9 @@ def rename_logs(iter_n: int):
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
 def main():
+    # make sure to use ur algos args
+    n_iterations = TRAIN_DICT["ppo"]
+    checkpoint_freq = TRAIN_DICT['ppo']
 
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
@@ -53,8 +56,8 @@ def main():
             config = factory.get_ppo_config(PPO_hparams)
         case "dqn": 
             config = factory.get_dqn_config(DQN_hparams)
-        case "a2c":
-            pass
+        case "sac":
+            config = factory.get_dqn_config(SAC_hparams)
 
     # build config
     algo = config.build()

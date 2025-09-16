@@ -2,8 +2,22 @@
 import os
 
 # ! Training config vars
-n_iterations = 400  # Increased for more meaningful training
-checkpoint_freq = 20  # Checkpointing and eval frequency in training
+TRAIN_DICT = {
+    "ppo" : {
+        400, # ! n_iterations
+        20   # ! chkpoint freq
+    },
+
+    "dqn" : {
+        400, # ! n_iterations
+        20   # ! chkpoint freq
+    },
+
+    "sac": {
+        400, # ! n_iterations
+        20   # ! chkpoint freq
+    }
+}
 
 # ! ------- ENV CONFIG -------
 # Parameters for sumo_rl.parallel_env
@@ -67,4 +81,7 @@ DQN_hparams = {
     "n_step": 1,                   # N-step returns
 }
 
-# A2C Hyperparameters - NPC or JAke
+# SAC Hyperparameters - NPC or JAke
+SAC_hparams = {
+    
+}

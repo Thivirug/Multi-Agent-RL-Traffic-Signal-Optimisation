@@ -80,11 +80,82 @@ class AlgoConfigFactory:
 
         return config
 
+    # jake3 or npc
     def get_dqn_config(self, dqn_hparams: dict):
         """
             Create DQN configuration for multi-agent learning
         """
         obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
+
+        obs_space, action_space, _ = self._get_obs_and_action_spaces()
+
+        # create config
+        config = (
+            PPOConfig()
+            .environment(env="sumo_multi_agent", env_config=self.env_config)
+            .framework('torch')
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
+            .learners(num_learners=2, num_cpus_per_learner=7)
+            .training(**dqn_hparams)
+            .evaluation(
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
+            )
+        )
+
+        # policy spec definition
+        shared_policy_spec = PolicySpec(
+            observation_space=obs_space,
+            action_space=action_space,
+            config={}  
+        )
+        
+        # creating shared policy
+        config = config.multi_agent(
+            policies={"shared_policy": shared_policy_spec},
+            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
+        )
+
+        return config
+    
+    def get_sac_config(self, sac_hparams: dict):
+        """
+            Create SAC configuration for multi-agent learning
+        """
+        obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
+
+        obs_space, action_space, _ = self._get_obs_and_action_spaces()
+
+        # create config
+        config = (
+            PPOConfig()
+            .environment(env="sumo_multi_agent", env_config=self.env_config)
+            .framework('torch')
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
+            .learners(num_learners=2, num_cpus_per_learner=7)
+            .training(**sac_hparams)
+            .evaluation(
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
+            )
+        )
+
+        # policy spec definition
+        shared_policy_spec = PolicySpec(
+            observation_space=obs_space,
+            action_space=action_space,
+            config={}  
+        )
+        
+        # creating shared policy
+        config = config.multi_agent(
+            policies={"shared_policy": shared_policy_spec},
+            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
+        )
+
+        return config
     
 
 
