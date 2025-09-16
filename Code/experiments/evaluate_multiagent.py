@@ -10,6 +10,7 @@ from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
 import torch
 from tqdm import trange
+import argparse
 
 def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
 
@@ -99,6 +100,14 @@ def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
     for agent_id, rewards in episode_rewards.items():
         print(f"\nAgent {agent_id}: mean reward = {np.mean(rewards)}")
 
+def _parse_args():
+    p = argparse.ArgumentParser(description="Evaluate trained multi-agent PPO checkpoint")
+    p.add_argument("checkpoint", help="Path to PPO checkpoint (file or directory)")
+    p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
+    p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
+    return p.parse_args()
+
 if __name__ == "__main__":
-    checkpoint_path = os.path.abspath("Code/outputs/checkpoints/ppo/200")
-    main(checkpoint_path)
+    args = _parse_args()
+    checkpoint_path = os.path.abspath(args.checkpoint)
+    main(checkpoint_path, max_steps=args.max_steps, num_episodes=args.episodes)
