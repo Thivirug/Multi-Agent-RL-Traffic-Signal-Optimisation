@@ -56,6 +56,8 @@ def main():
             config = factory.get_dqn_config(DQN_hparams)
         case "sac":
             config = factory.get_sac_config(SAC_hparams)
+        case _:
+            raise ValueError("Algorithm can be ppo, dqn, or sac only !")
 
     # use algorithm specific args
     n_iterations = ARG_DICT[algo_name]
