@@ -13,6 +13,8 @@ from tqdm import trange
 import warnings
 warnings.filterwarnings("ignore")
 
+import json
+
 
 def rename_logs(iter_n: int):
     """
@@ -54,35 +56,46 @@ def main():
     # build config
     algo = config.build()
     
+    # list to store result dicts to be put into json
+    results = []
+    json_path = os.path.abspath("Code/outputs/results.json")
+
     # training loop
     for i in trange(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
         algo.train()
 
         # rename logs
         rename_logs(i)
-    
-        # result = algo.evaluate()
-        
-        # # ! MIGHT NEED TO SAVE TO JSON
-        # print(f"\n\t -- Iteration {i+1} --- \n\tMean Episode Reward : {result['env_runners']['episode_return_mean']:.5f}")
-        # # pprint.pprint(f"Per Agent Mean Episode Reward : {result['env_runners']['agent_episode_returns_mean']:.5f}")
-
-        # # checkpoint every freq-th iter
-        # if i+1 % checkpoint_freq == 0:
-        #     chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i+1}") 
-        #     os.makedirs(chkpoint_dir, exist_ok=True)
-        #     chkpoint_path = algo.save_to_path(chkpoint_dir)
-        #     print(f"/nCheckpoint saved to {chkpoint_path}/n")
 
         if (i + 1) % checkpoint_freq == 0:
+            # evaluate algorithm till now
             result = algo.evaluate()
-            print(f"\n\t -- Iteration {i+1} --- \n\tMean Episode Reward: {result['env_runners']['episode_return_mean']:.5f}")
+
+            # print iteration progress message
+            mean_episode_reward = result['env_runners'].get('episode_return_mean', {}) 
+            print(f"\n\t -- Iteration {i+1} --- \n\tMean Episode Reward: {mean_episode_reward:.5f}")
+
+            # print per agent reward
             per_agent_mean = result['env_runners'].get('agent_episode_returns_mean', {})
             print(f"\tPer Agent Mean Episode Reward: {per_agent_mean}")
+
+            # checkpointing
             chkpoint_dir = os.path.abspath(f"Code/outputs/checkpoints/{algo_name}/{i+1}")
             os.makedirs(chkpoint_dir, exist_ok=True)
             chkpoint_path = algo.save(chkpoint_dir)
             print(f"\nCheckpoint saved to {chkpoint_path}\n")
+
+            # appending to results
+            result = {
+                "Iteration number": i+1,
+                "Mean episode reward": mean_episode_reward,
+                "Mean per agent reward": per_agent_mean
+            }
+            results.append(result)
+
+    # dump to json
+    with open(json_path, "w") as f:
+        json.dump(results, f, indent=2)
 
     # close ray
     algo.stop()
