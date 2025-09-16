@@ -94,6 +94,8 @@ def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
         for agent_id in env.possible_agents:
             print(f"\n\tAgent {agent_id}: Reward = {rewards[agent_id]}")
 
+        print() # for aesthetics 
+
     env.close()
 
     print("\n=== Evaluation Summary ===")
