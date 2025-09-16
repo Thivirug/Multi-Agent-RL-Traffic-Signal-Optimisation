@@ -95,7 +95,7 @@ class AlgoConfigFactory:
 
         # create config
         config = (
-            PPOConfig()
+            DQNConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
             .env_runners(num_env_runners=1, num_gpus_per_env_runner=1) # ! CHANGE THESE FOR UR PC REQS
@@ -134,7 +134,7 @@ class AlgoConfigFactory:
 
         # create config
         config = (
-            PPOConfig()
+            SACConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
             .env_runners(num_env_runners=1, num_gpus_per_env_runner=1) # ! CHANGE THESE FOR UR PC REQS
