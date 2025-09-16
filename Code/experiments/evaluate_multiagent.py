@@ -1,17 +1,14 @@
 # experiments/evaluate_multiagent.py
 import os
-import ray
-import time
 import numpy as np
-from Code.config import ENV_CONFIG, PPO_hparams
+from Code.config import ENV_CONFIG
 from algorithms import AlgoConfigFactory
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
-from ray.rllib.core.rl_module.rl_module import RLModule
 import torch
 
-def main(checkpoint_dir: str, max_steps: int = 1000):
+def main(checkpoint_dir: str, max_steps: int = 20):
 
     # create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
@@ -90,38 +87,6 @@ def main(checkpoint_dir: str, max_steps: int = 1000):
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
         print(f"Agent {agent_id}: mean reward = {np.mean(rewards)}")
-
-
-#     # Manual evaluation loop for visualization
-#     env = factory._create_env(local_config)
-#     obs, _ = env.reset()
-#     total_reward = 0
-#     episode_length = 0
-#     obs_batch = {agent_id: np.array([obs[agent_id]], dtype=np.float32) for agent_id in env.agents}
-
-#     while env.agents and episode_length < max_steps:
-#         # Compute actions using RLModule
-#         action_dict = module.forward_inference(obs_batch)
-#         actions = {agent_id: action_dict[agent_id][0] for agent_id in env.agents}
-
-#         # Step the environment
-#         obs, rewards, terminated, truncated, info = env.step(actions)
-#         total_reward += sum(rewards.values())
-#         episode_length += 1
-#         obs_batch = {agent_id: np.array([obs[agent_id]], dtype=np.float32) for agent_id in env.agents}
-#         time.sleep(0.1)  # Slow down for visibility
-
-#         if all(terminated.values()) or all(truncated.values()):
-#             break
-
-#     print(f"Manual Eval - Total Reward: {total_reward}, Length: {episode_length}")
-#     print(f"  Per-Agent Rewards (last step): {dict(rewards)}")
-#     input("Press Enter to close the SUMO GUI and exit...")
-#     env.close()
-
-#     # Stop the algorithm
-#     algo.stop()
-#     ray.shutdown()
 
 if __name__ == "__main__":
     checkpoint_path = os.path.abspath("Code/outputs/checkpoints/ppo/200")
