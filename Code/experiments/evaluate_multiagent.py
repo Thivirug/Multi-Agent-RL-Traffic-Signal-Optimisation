@@ -124,4 +124,4 @@ if __name__ == "__main__":
     args = _parse_args()
     checkpoint_path = os.path.abspath(args.checkpoint)
     algoname = args.algo
-    main(checkpoint_path, max_steps=args.max_steps, num_episodes=args.episodes)
+    main(checkpoint_path, algoname, max_steps=args.max_steps, num_episodes=args.episodes)
