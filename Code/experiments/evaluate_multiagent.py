@@ -8,11 +8,13 @@ from algorithms import AlgoConfigFactory
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
+from ray.rllib.algorithms.dqn import DQN
+from ray.rllib.algorithms.sac import SAC
 import torch
 from tqdm import trange
 import argparse
 
-def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
+def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes = 5):
 
     # create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
@@ -30,8 +32,16 @@ def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
     # create env with updated config for eval
     env = factory._create_env(local_config)
 
-    # restore the algorithm from checkpoint
-    algo = PPO.from_checkpoint(checkpoint_dir)
+    # restore the required algorithm from checkpoint
+    match algo_name:
+        case 'ppo':
+            algo = PPO.from_checkpoint(checkpoint_dir)
+        case 'dqn':
+            algo = DQN.from_checkpoint(checkpoint_dir)
+        case 'sac':
+            algo = SAC.from_checkpoint(checkpoint_dir)
+        case _:
+            raise ValueError("Algorithm can be ppo, dqn, or sac only !")
 
     episode_rewards = {agent: [] for agent in env.possible_agents}
 
@@ -104,6 +114,7 @@ def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
 
 def _parse_args():
     p = argparse.ArgumentParser(description="Evaluate trained multi-agent PPO checkpoint")
+    p.add_argument("algo", help="Algorithm used for evaluation")
     p.add_argument("checkpoint", help="Path to PPO checkpoint (file or directory)")
     p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
     p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
@@ -112,4 +123,5 @@ def _parse_args():
 if __name__ == "__main__":
     args = _parse_args()
     checkpoint_path = os.path.abspath(args.checkpoint)
+    algoname = args.algo
     main(checkpoint_path, max_steps=args.max_steps, num_episodes=args.episodes)
