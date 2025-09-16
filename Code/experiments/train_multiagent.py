@@ -55,7 +55,7 @@ def main():
         case "dqn": 
             config = factory.get_dqn_config(DQN_hparams)
         case "sac":
-            config = factory.get_dqn_config(SAC_hparams)
+            config = factory.get_sac_config(SAC_hparams)
 
     # use algorithm specific args
     n_iterations = TRAIN_DICT[algo_name]
