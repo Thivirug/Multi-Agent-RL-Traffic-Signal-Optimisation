@@ -73,6 +73,8 @@ from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn import DQNConfig
 # from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.policy.policy import PolicySpec
+from ray.rllib.core.rl_module import RLModuleSpec
+from ray.rllib.algorithms.ppo.ppo_catalog import PPOCatalog
 # from ray.rllib.utils.typing import PolicyID
 # from ray.tune.registry import register_env
 # from typing import Dict, Tuple
@@ -135,9 +137,12 @@ class AlgoConfigFactory:
         # Training aggregates rollouts from all agents (centralized).
         # Execution: Each agent inputs its local observation to the shared policy (decentralized).
         shared_policy_spec = PolicySpec(
-            observation_space=obs_space,
-            action_space=action_space,
-            config={}  
+            module_spec=RLModuleSpec(
+                observation_space=obs_space,
+                action_space=action_space,
+                model_config={},          
+                catalog_class=PPOCatalog, 
+            )
         )
         
         config = config.multi_agent(
