@@ -8,7 +8,7 @@ TRAIN_DICT = {
         20   # ! chkpoint freq
     },
 
-    "dqn" : {
+    "dqn" : { # ! npc jake change these to wt u need !!
         400, # ! n_iterations
         20   # ! chkpoint freq
     },
