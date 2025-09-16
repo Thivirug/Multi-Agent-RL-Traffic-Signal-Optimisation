@@ -47,12 +47,26 @@ class AlgoConfigFactory:
         temp_env.close() 
         return obs_space, action_space, agent_ids
 
+    def _get_shared_policy_spec(self):
+        """
+            Return the PolicySpec object to be passed into the shared policy map.
+        """
+        obs_space, action_space, _ = self._get_obs_and_action_spaces()
+
+        # policy spec definition
+        shared_policy_spec = PolicySpec(
+            observation_space=obs_space,
+            action_space=action_space,
+            config={}  
+        )
+
+        return shared_policy_spec
+
     # ! ================== PPO ==================
     def get_ppo_config(self, ppo_hparams: dict):
         """
             Create PPO configuration with CTDE support
         """
-        obs_space, action_space, _ = self._get_obs_and_action_spaces()
 
         # create config
         config = (
@@ -68,17 +82,10 @@ class AlgoConfigFactory:
                 evaluation_config={"env_config": self.env_config}
             )
         )
-
-        # policy spec definition
-        shared_policy_spec = PolicySpec(
-            observation_space=obs_space,
-            action_space=action_space,
-            config={}  
-        )
         
         # creating shared policy
         config = config.multi_agent(
-            policies={"shared_policy": shared_policy_spec},
+            policies={"shared_policy": self._get_shared_policy_spec()},
             policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
         )
 
@@ -89,8 +96,6 @@ class AlgoConfigFactory:
         """
             Create DQN configuration with CTDE support.
         """
-
-        obs_space, action_space, _ = self._get_obs_and_action_spaces()
 
         # create config
         config = (
@@ -106,17 +111,10 @@ class AlgoConfigFactory:
                 evaluation_config={"env_config": self.env_config}
             )
         )
-
-        # policy spec definition
-        shared_policy_spec = PolicySpec(
-            observation_space=obs_space,
-            action_space=action_space,
-            config={}  
-        )
         
         # creating shared policy
         config = config.multi_agent(
-            policies={"shared_policy": shared_policy_spec},
+            policies={"shared_policy": self._get_shared_policy_spec()},
             policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
         )
 
@@ -127,7 +125,6 @@ class AlgoConfigFactory:
         """
             Create SAC configuration with CTDE support.
         """
-        obs_space, action_space, _ = self._get_obs_and_action_spaces()
 
         # create config
         config = (
@@ -143,17 +140,10 @@ class AlgoConfigFactory:
                 evaluation_config={"env_config": self.env_config}
             )
         )
-
-        # policy spec definition
-        shared_policy_spec = PolicySpec(
-            observation_space=obs_space,
-            action_space=action_space,
-            config={}  
-        )
         
         # creating shared policy
         config = config.multi_agent(
-            policies={"shared_policy": shared_policy_spec},
+            policies={"shared_policy": self._get_shared_policy_spec()},
             policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
         )
 
