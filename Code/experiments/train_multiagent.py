@@ -19,22 +19,26 @@ def rename_logs(iter_n: int):
         Rename the .csv log files to include iteration number
     """
     logs_dir = os.path.abspath("Code/outputs/logs")
+
+    # define the pattern of strings of the filename
     pattern = re.compile(r"(logs_conn\d+_ep\d+)\.csv")
 
     for filename in os.listdir(logs_dir):
+        # find matches
         match = pattern.match(filename)
+
+        # make sure that previously renamed iteration logs are not renamed again
         if match and not f"_iter{iter_n}" in filename: # iter_n + 1 is not used to avoid a file naming error in sumo
             base = match.group(1)
             new_filename = f"{base}_iter{iter_n}.csv"
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
 def main():
-    # # init ray
-    # ray.init() 
-    
+
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
 
+    # register our env
     register_env(
         name = "sumo_multi_agent",
         env_creator = lambda config: ParallelPettingZooEnv(factory._create_env(config))
@@ -49,7 +53,8 @@ def main():
             config = factory.get_ppo_config(PPO_hparams)
         case "dqn": 
             config = factory.get_dqn_config(DQN_hparams)
-        # other one
+        case "a2c":
+            pass
 
     # build config
     algo = config.build()
@@ -59,12 +64,14 @@ def main():
     json_path = os.path.abspath("Code/outputs/results.json")
 
     # training loop
-    for i in trange(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
+    for i in trange(n_iterations): 
+        # run training loop
         algo.train()
 
         # rename logs
         rename_logs(i)
 
+        # evaluate and checkpoint
         if (i + 1) % checkpoint_freq == 0:
             # evaluate algorithm till now
             result = algo.evaluate()
@@ -98,6 +105,5 @@ def main():
 
     # close ray
     algo.stop()
-    # ray.shutdown()
 
 main()
