@@ -1,5 +1,3 @@
-
-# experiments/evaluate_multiagent.py
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -11,9 +9,9 @@ from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.algorithms.ppo import PPO
 import torch
+from tqdm import trange
 
-
-def main(checkpoint_dir: str, max_steps: int = 20):
+def main(checkpoint_dir: str, max_steps: int = 20, num_episodes = 5):
 
     # create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
@@ -28,42 +26,48 @@ def main(checkpoint_dir: str, max_steps: int = 20):
         env_creator=lambda config: ParallelPettingZooEnv(factory._create_env(config))
     )
 
+    # create env with updated config for eval
     env = factory._create_env(local_config)
 
     # restore the algorithm from checkpoint
     algo = PPO.from_checkpoint(checkpoint_dir)
-    # module = algo.get_module("shared_policy")
-    # print(type(module))
 
-    num_episodes = 5
     episode_rewards = {agent: [] for agent in env.possible_agents}
 
     # Get the trained module (policy) by ID
     module = algo.get_module("shared_policy")  
 
+    # inner helper function
     def compute_actions(module, obs: dict):
+        """
+            Get actions executed by each agent and create a dict to pass into env.step().
+        """
         obs_array = np.array(list(obs.values()), dtype=np.float32)   # ensure ndarray
         obs_tensor = torch.from_numpy(obs_array).unsqueeze(0)  # add batch dim
 
         actions_dict = {}
 
-        # Forward pass through the policy (exploration mode = includes stochasticity)
+        # Forward pass through the policy (greedy in the sense it uses the learned policy)
         out = module.forward_inference({"obs": obs_tensor})
 
+        # sample the best action
         action_dist_class = module.get_inference_action_dist_cls()
         action_dist = action_dist_class.from_logits(
             out["action_dist_inputs"]
         )
         actions = action_dist.sample()[0].numpy()
 
+        # create the actions dictionary
         for i, agent_id in enumerate(env.possible_agents):
             actions_dict[agent_id] = actions[i]
 
         return actions_dict
-        
-
-    for ep in range(num_episodes):
+    
+    # run eval loop for defined episodes
+    for ep in trange(num_episodes):
         obs, _ = env.reset()
+        
+        # a dict to store rewards for each agent per episode
         rewards = {agent: 0 for agent in env.possible_agents}
 
         print(f"Starting episode {ep+1}... (watch SUMO-GUI)")
@@ -71,27 +75,29 @@ def main(checkpoint_dir: str, max_steps: int = 20):
         while True:
             actions_dict = compute_actions(module, obs)
 
+            # ! all these return values are dict (since multi agent)
             obs, rew, terminated, truncated, _ = env.step(actions_dict)
 
             for agent_id, r in rew.items():
                 rewards[agent_id] += r
 
+            # termination condition - if "ALL" agents are terminated or truncated
             if all(terminated.values()) or all(truncated.values()):
                 break
 
-        # Store rewards
+        # store rewards
         for agent_id in env.possible_agents:
             episode_rewards[agent_id].append(rewards[agent_id])
 
-        print(f"Episode {ep+1} finished.")
+        print(f"\n ----- Episode {ep+1} finished ----- ")
         for agent_id in env.possible_agents:
-            print(f"  Agent {agent_id}: Reward = {rewards[agent_id]}")
+            print(f"\n\tAgent {agent_id}: Reward = {rewards[agent_id]}")
 
     env.close()
 
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
-        print(f"Agent {agent_id}: mean reward = {np.mean(rewards)}")
+        print(f"\nAgent {agent_id}: mean reward = {np.mean(rewards)}")
 
 if __name__ == "__main__":
     checkpoint_path = os.path.abspath("Code/outputs/checkpoints/ppo/200")
