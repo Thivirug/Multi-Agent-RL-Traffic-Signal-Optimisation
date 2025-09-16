@@ -34,10 +34,6 @@ def rename_logs(iter_n: int):
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
 def main():
-    # make sure to use ur algos args
-    n_iterations = TRAIN_DICT["ppo"]
-    checkpoint_freq = TRAIN_DICT['ppo']
-
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
 
@@ -48,6 +44,8 @@ def main():
     )
     
     # get algo config 
+    print("\n ====== TRAINING START ======\n")
+    print("Algorithm Options: ppo, dqn, sac")
     algo_name = input("Training algorithm: --> ")
 
     # get config
@@ -59,12 +57,18 @@ def main():
         case "sac":
             config = factory.get_dqn_config(SAC_hparams)
 
+    # use algorithm specific args
+    n_iterations = TRAIN_DICT[algo_name]
+    checkpoint_freq = TRAIN_DICT[algo_name]
+
     # build config
     algo = config.build()
     
     # list to store result dicts to be put into json
     results = []
-    json_path = os.path.abspath("Code/outputs/results.json")
+    # make json file
+    filename = f"results_{algo_name}.json"
+    json_path = os.path.join(os.path.abspath("Code/outputs"), filename)
 
     # training loop
     for i in trange(n_iterations): 
@@ -105,6 +109,8 @@ def main():
     print(f"\n\t Dumping Results to {json_path}...\n")
     with open(json_path, "w") as f:
         json.dump(results, f, indent=2)
+
+    print("\n ====== TRAINING END ======\n")
 
     # close ray
     algo.stop()
