@@ -26,7 +26,7 @@ ENV_CONFIG = {
 
 # ! ------- Algorithm hyperparams -------
 
-# PPO Hyperparameters for CTDE
+# PPO Hyperparameters  - Thiviru
 PPO_hparams = {
     'lr': [
         [0, 1e-4],    # Start with 2e-5 at timestep 0
@@ -45,7 +45,7 @@ PPO_hparams = {
     'grad_clip': 0.5,              # Gradient clipping
 }
 
-# DQN Hyperparameters for Independent Learning
+# DQN Hyperparameters  - NPC or Jake
 DQN_hparams = {
     "learning_starts": 5000,       # Start training after this many steps
     "train_batch_size": 32,        # Batch size for training
@@ -66,3 +66,5 @@ DQN_hparams = {
     "dueling": True,               # Use dueling network architecture
     "n_step": 1,                   # N-step returns
 }
+
+# A2C Hyperparameters - NPC or JAke
