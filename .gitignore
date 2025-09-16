@@ -9,7 +9,7 @@ __pycache__/
 .vscode/
 
 # Logs and outputs
-*.log
+*.json
 
 # System files
 .DS_Store
