@@ -8,6 +8,7 @@ from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 
 import os
 import re
+from tqdm import trange
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -54,7 +55,7 @@ def main():
     algo = config.build()
     
     # training loop
-    for i in range(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
+    for i in trange(n_iterations): # 1 iteration =  "train_batch_size_per_learner" timesteps # ! use tqdm
         algo.train()
 
         # rename logs

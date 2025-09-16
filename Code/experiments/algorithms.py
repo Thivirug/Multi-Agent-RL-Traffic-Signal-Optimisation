@@ -118,14 +118,14 @@ class AlgoConfigFactory:
         """
         Create PPO configuration with CTDE support
         """
-        obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
+        obs_space, action_space, _ = self._get_obs_and_action_spaces()
     
         config = (
             PPOConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
             .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
-            .learners(num_learners=2, num_cpus_per_learner=10)
+            .learners(num_learners=2, num_cpus_per_learner=7)
             .training(**ppo_hparams)
             .evaluation(
                 evaluation_interval=10,
@@ -186,12 +186,5 @@ class AlgoConfigFactory:
     #             policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
     #         )
     #     )
-
-    def get_policy_mapping_fn(self, agent_ids: list, use_shared_policy: bool = True):
-        """Helper function to create policy mapping"""
-        if use_shared_policy:
-            return lambda agent_id, *args, **kwargs: "shared_policy"
-        else:
-            return lambda agent_id, *args, **kwargs: f"policy_{agent_id}"
 
 
