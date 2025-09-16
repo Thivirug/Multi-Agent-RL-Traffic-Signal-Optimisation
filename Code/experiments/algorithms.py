@@ -89,7 +89,6 @@ class AlgoConfigFactory:
         """
             Create DQN configuration with CTDE support.
         """
-        obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
 
         obs_space, action_space, _ = self._get_obs_and_action_spaces()
 
@@ -128,8 +127,6 @@ class AlgoConfigFactory:
         """
             Create SAC configuration with CTDE support.
         """
-        obs_space, action_space, agent_ids = self._get_obs_and_action_spaces()
-
         obs_space, action_space, _ = self._get_obs_and_action_spaces()
 
         # create config
