@@ -61,6 +61,19 @@ class AlgoConfigFactory:
         )
 
         return shared_policy_spec
+    
+    def _CTDE_config(self, config):
+        """
+            Return the updated config with CTDE support. 
+            Raises exception "Check policy spec or env support for MARL".
+        """
+        try:
+            return config.multi_agent(
+                policies={"shared_policy": self._get_shared_policy_spec()},
+                policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
+            )
+        except:
+            raise Exception("Check policy spec or env support for MARL")
 
     # ! ================== PPO ==================
     def get_ppo_config(self, ppo_hparams: dict):
@@ -83,13 +96,8 @@ class AlgoConfigFactory:
             )
         )
         
-        # creating shared policy
-        config = config.multi_agent(
-            policies={"shared_policy": self._get_shared_policy_spec()},
-            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
-        )
-
-        return config
+        # creating CTDE shared policy 
+        return self._CTDE_config(config)
 
     # ! ================== DQN ==================
     def get_dqn_config(self, dqn_hparams: dict):
@@ -112,13 +120,8 @@ class AlgoConfigFactory:
             )
         )
         
-        # creating shared policy
-        config = config.multi_agent(
-            policies={"shared_policy": self._get_shared_policy_spec()},
-            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
-        )
-
-        return config
+        # creating CTDE shared policy 
+        return self._CTDE_config(config)
     
     # ! ================== SAC ==================
     def get_sac_config(self, sac_hparams: dict):
@@ -141,13 +144,8 @@ class AlgoConfigFactory:
             )
         )
         
-        # creating shared policy
-        config = config.multi_agent(
-            policies={"shared_policy": self._get_shared_policy_spec()},
-            policy_mapping_fn=lambda agent_id, *args, **kwargs: "shared_policy"
-        )
-
-        return config
+        # creating CTDE shared policy 
+        return self._CTDE_config(config)
     
 
 
