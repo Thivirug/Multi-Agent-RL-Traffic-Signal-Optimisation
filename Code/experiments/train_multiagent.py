@@ -1,4 +1,3 @@
-
 # Training logic for multi-agents 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -14,7 +13,6 @@ import re
 from tqdm import trange
 
 import json
-
 
 def rename_logs(iter_n: int):
     """

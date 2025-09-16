@@ -1,18 +1,10 @@
-
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn import DQNConfig
-# from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.policy.policy import PolicySpec
-# from ray.rllib.utils.typing import PolicyID
-# from ray.tune.registry import register_env
-# from typing import Dict, Tuple
-# import gymnasium as gym
-
-import sumo_rl
-
+import sumo_rl # type: ignore
 
 class AlgoConfigFactory:
     """
