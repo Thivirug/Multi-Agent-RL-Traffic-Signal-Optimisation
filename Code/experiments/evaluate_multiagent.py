@@ -115,7 +115,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes 
 def _parse_args():
     p = argparse.ArgumentParser(description="Evaluate trained multi-agent PPO checkpoint")
     p.add_argument("algo", help="Algorithm used for evaluation")
-    p.add_argument("checkpoint", help="Path to PPO checkpoint (file or directory)")
+    p.add_argument("checkpoint", help="Path to PPO checkpoint (directory)")
     p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
     p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
     return p.parse_args()
