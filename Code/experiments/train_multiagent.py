@@ -60,8 +60,8 @@ def main():
             raise ValueError("Algorithm can be ppo, dqn, or sac only !")
 
     # use algorithm specific args
-    n_iterations = ARG_DICT[algo_name]
-    checkpoint_freq = ARG_DICT[algo_name]
+    n_iterations = ARG_DICT[algo_name]['n_iterations']
+    checkpoint_freq = ARG_DICT[algo_name]['chkpoint_eval_freq']
 
     # build config
     algo = config.build()
