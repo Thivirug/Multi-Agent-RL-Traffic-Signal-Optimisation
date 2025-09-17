@@ -1,0 +1,3 @@
+record_eval should ideally run parallelly when Code/experiments/evaluate_multiagent.py runs 
+rewards_plot needs rewards_{*}.json file - convert to a df 
+waiting_time_plot needs log files in Code/outputs/logs
