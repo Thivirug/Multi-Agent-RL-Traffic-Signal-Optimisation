@@ -14,7 +14,7 @@ import torch
 from tqdm import trange
 import argparse
 
-def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes = 5):
+def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes: int = 5) -> None:
 
     # create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
@@ -49,7 +49,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes 
     module = algo.get_module("shared_policy")  
 
     # inner helper function
-    def compute_actions(module, obs: dict):
+    def compute_actions(module, obs: dict) -> dict:
         """
             Get actions executed by each agent and create a dict to pass into env.step().
         """
@@ -112,7 +112,10 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes 
     for agent_id, rewards in episode_rewards.items():
         print(f"\nAgent {agent_id}: mean reward = {np.mean(rewards)}")
 
-def _parse_args():
+def _parse_args() -> argparse.Namespace:
+    """
+        Parse given args from the terminal and return them to the program.
+    """
     p = argparse.ArgumentParser(description="Evaluate trained multi-agent algorithm checkpoint")
     p.add_argument("algo", help="Algorithm used for evaluation")
     p.add_argument("checkpoint", help="Path to checkpoint (directory)")
