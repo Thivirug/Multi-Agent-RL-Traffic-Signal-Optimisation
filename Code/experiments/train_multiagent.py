@@ -14,7 +14,7 @@ from tqdm import trange
 
 import json
 
-def rename_logs(iter_n: int):
+def rename_logs(iter_n: int) -> None:
     """
         Rename the .csv log files to include iteration number
     """
@@ -33,7 +33,7 @@ def rename_logs(iter_n: int):
             new_filename = f"{base}_iter{iter_n}.csv"
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
-def main():
+def main() -> None:
     # create and register env 
     factory = AlgoConfigFactory(ENV_CONFIG)
 
