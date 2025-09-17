@@ -9,6 +9,10 @@ from ray.rllib.algorithms.sac import SACConfig
 from ray.rllib.policy.policy import PolicySpec
 import sumo_rl # type: ignore
 
+from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
+import pettingzoo
+from gymnasium.spaces import Space
+
 # ! NOTE :         
 # Using CTDE: Single shared policy for all agents (parameter sharing)
 # Training aggregates rollouts from all agents (centralized).
@@ -18,18 +22,18 @@ class AlgoConfigFactory:
     """
         Common class to define ray rl algorithms with CTDE support.
     """
-    def __init__(self, env_config: dict):
+    def __init__(self, env_config: dict) -> None:
         self.env_config = env_config
 
     # create env (helper)
-    def _create_env(self, config = None):
+    def _create_env(self, config: dict = None) -> pettingzoo.utils.conversions.aec_to_parallel_wrapper:
         """
             Create a parallel env in SUMO.
             config = None was added to make this compatible with the lambda in registry
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
     
-    def _get_obs_and_action_spaces(self):
+    def _get_obs_and_action_spaces(self) -> tuple[Space, Space]:
         """
             Get observation and action spaces from environment.
         """
@@ -45,13 +49,13 @@ class AlgoConfigFactory:
         action_space = temp_env.action_space(sample_agent)
         
         temp_env.close() 
-        return obs_space, action_space, agent_ids
+        return obs_space, action_space
 
-    def _get_shared_policy_spec(self):
+    def _get_shared_policy_spec(self) -> PolicySpec:
         """
             Return the PolicySpec object to be passed into the shared policy map.
         """
-        obs_space, action_space, _ = self._get_obs_and_action_spaces()
+        obs_space, action_space = self._get_obs_and_action_spaces()
 
         # policy spec definition
         shared_policy_spec = PolicySpec(
@@ -62,7 +66,7 @@ class AlgoConfigFactory:
 
         return shared_policy_spec
     
-    def _CTDE_config(self, config):
+    def _CTDE_config(self, config: AlgorithmConfig) -> AlgorithmConfig:
         """
             Return the updated config with CTDE support. 
             Raises exception "Check policy spec or env support for MARL".
@@ -76,7 +80,7 @@ class AlgoConfigFactory:
             raise Exception("Check policy spec or env support for MARL")
 
     # ! ================== PPO ==================
-    def get_ppo_config(self, ppo_hparams: dict):
+    def get_ppo_config(self, ppo_hparams: dict) -> AlgorithmConfig:
         """
             Create PPO configuration with CTDE support
         """
@@ -100,7 +104,7 @@ class AlgoConfigFactory:
         return self._CTDE_config(config)
 
     # ! ================== DQN ==================
-    def get_dqn_config(self, dqn_hparams: dict):
+    def get_dqn_config(self, dqn_hparams: dict) -> AlgorithmConfig:
         """
             Create DQN configuration with CTDE support.
         """
@@ -124,7 +128,7 @@ class AlgoConfigFactory:
         return self._CTDE_config(config)
     
     # ! ================== SAC ==================
-    def get_sac_config(self, sac_hparams: dict):
+    def get_sac_config(self, sac_hparams: dict) -> AlgorithmConfig:
         """
             Create SAC configuration with CTDE support.
         """
