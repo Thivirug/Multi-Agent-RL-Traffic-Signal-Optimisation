@@ -4,8 +4,8 @@ import os
 # ! Training config vars
 ARG_DICT = {
     "ppo" : {
-        "n_iterations": 400,   
-        "chkpoint_eval_freq": 20 # checkpointing and training eval freq
+        "n_iterations": 200,   
+        "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
 
     "dqn" : { # ! npc jake change these to wt u need !!
@@ -42,13 +42,12 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters  - Thiviru
 PPO_hparams = {
-    'lr': [
-        [0, 1e-4],    # Start with 2e-5 at timestep 0
-        [30000, 1e-5],  # Decay to 1e-6 after 30k timesteps
-        [90000, 1e-6],  # Decay to 1e-6 after 90k timesteps
-    ],                 
+    'lr': 1e-4,            
     'train_batch_size_per_learner': 256,  # Batch size per learner
-    'entropy_coeff': 0.1,         # Entropy coefficient for exploration
+    'entropy_coeff' : [              # Entropy coefficient for exploration
+        [0, 0.1],          # <- initial value at timestep 0
+        [100000, 0.05],     # <- value at 100k timesteps
+    ],       
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter
     'vf_clip_param': 10.0,         # Value function clipping parameter
