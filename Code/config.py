@@ -80,7 +80,22 @@ DQN_hparams = {
     "n_step": 1,                   # N-step returns
 }
 
-# SAC Hyperparameters - NPC or JAke
+# SAC Hyperparameters - Jake
 SAC_hparams = {
-    
+    "twin_q": True,                # Use two Q-networks for the critics, to mitigate overestimation bias
+    "gamma": 0.99,                 #discount factor
+    "tau" : 0.005,                 # Soft update coefficeint
+    "train_batch_size_per_learner" : 256, 
+    "replay_buffer_config" : {
+        "type" : "MultiAgentPrioritizedReplayBuffer",
+        "capacity" : 100000        #size of replay buffer
+    },
+    "num_steps_sampled_before_learning_starts": 5000, # number of steps to collect before training starts
+    "target_entropy": "auto",      # automatically tune the entropy coefficeint (alpha)
+    "target_network_update_freq": 1, #update target network every 'train_batch_size' steps. 1 is standards for soft updates
+    "optimization_config": {
+        "actor_learning_rate": 3e-4,
+        "critic_learning_rate": 3e-4,
+        "entropy_learning_rate": 3e-4,
+    }
 }

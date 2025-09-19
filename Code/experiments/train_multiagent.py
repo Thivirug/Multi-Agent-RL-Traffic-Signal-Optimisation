@@ -12,6 +12,9 @@ import os
 import re
 from tqdm import trange
 
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 import json
 
 def rename_logs(iter_n: int) -> None:
