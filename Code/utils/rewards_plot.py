@@ -165,7 +165,7 @@ def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list, algo_name:
     plt.xlabel('Iterations', fontsize=24)
     plt.ylabel('Mean Episode Reward', fontsize=24)
     plt.grid(True)
-    plt.legend()
+    plt.legend(title="Agent ID", title_fontsize=20, fontsize=16, loc='lower right')
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     plt.savefig(os.path.join(PLOTS_PARENT_PATH, 'mean_reward_per_agent.png'))
