@@ -94,12 +94,13 @@ def _create_rewards_dict_all_agents(agents_series: pd.Series, agent_ids: list) -
 
 # ! --------------------------------------- Main PLOTTING Funcs -------------------------------------------
 
-def plot_mean_ep_reward(df: pd.DataFrame) -> None:
+def plot_mean_ep_reward(df: pd.DataFrame, algo_name: str) -> None:
     """
         Plot the variation of mean episode reward with iterations and save it.
 
         Args:
             df (pd.DataFrame): DataFrame containing the results from the json file.
+            algo_name (str): Name of the algorithm used for evaluation (ppo/dqn/sac).
     """
 
     # check if df is empty
@@ -117,7 +118,7 @@ def plot_mean_ep_reward(df: pd.DataFrame) -> None:
         color='b'
     )
 
-    plt.title('Mean Episode Reward vs Iterations', fontsize=30)
+    plt.title(f'Mean Episode Reward vs Iterations: {algo_name.upper()}', fontsize=30)
     plt.xlabel('Iterations', fontsize=24)
     plt.ylabel('Mean Episode Reward', fontsize=24)
     plt.grid(True)
@@ -126,13 +127,14 @@ def plot_mean_ep_reward(df: pd.DataFrame) -> None:
     plt.savefig(os.path.join(PLOTS_PARENT_PATH, 'mean_episode_reward.png'))
     print(f"Plot saved to {os.path.join(PLOTS_PARENT_PATH, 'mean_episode_reward.png')}")
 
-def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list) -> None:
+def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list, algo_name: str) -> None:
     """
         Plot the variation of mean episode reward for all agents with iterations in a single fig and save it.
 
         Args:
             df (pd.DataFrame): DataFrame containing the results from the json file.
             agent_ids (list): List of agent ids in the environment.
+            algo_name (str): Name of the algorithm used for evaluation (ppo/dqn/sac).
     """
 
     # check if df is empty
@@ -159,7 +161,7 @@ def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list) -> None:
             label = f'{id}'
         )
 
-    plt.title('Mean Episode Reward Per Agent vs Iterations', fontsize=30)
+    plt.title(f'Mean Episode Reward Per Agent vs Iterations: {algo_name.upper()}', fontsize=30)
     plt.xlabel('Iterations', fontsize=24)
     plt.ylabel('Mean Episode Reward', fontsize=24)
     plt.grid(True)
@@ -187,8 +189,8 @@ def main():
     ids = _get_agent_ids(ENV_CONFIG)
 
     # plot
-    plot_mean_ep_reward(df)
-    plot_all_agents_mean_ep_reward(df, ids)
+    plot_mean_ep_reward(df, algo)
+    plot_all_agents_mean_ep_reward(df, ids, algo)
     
 
 if __name__ == '__main__':
