@@ -4,7 +4,7 @@ import os
 # ! Training config vars
 ARG_DICT = {
     "ppo" : {
-        "n_iterations": 1000,   
+        "n_iterations": 2000,   
         "chkpoint_eval_freq": 20 # checkpointing and training eval freq
     },
 
@@ -42,12 +42,17 @@ ENV_CONFIG = {
 
 # PPO Hyperparameters 
 PPO_hparams = {
-    'lr': 1e-4,            
+    'lr': [
+        [0, 5e-4],         # <- initial learning rate at timestep 0
+        [100000, 1e-4],    # <- learning rate at 100k timesteps
+        [300000, 5e-5],    # <- learning rate at 300k timesteps
+    ],            
     'train_batch_size_per_learner': 256,  # Batch size per learner
     'entropy_coeff' : [              # Entropy coefficient for exploration
         [0, 0.1],          # <- initial value at timestep 0
         [100000, 0.06],     # <- value at 100k timesteps
         [250000, 0.02],     # <- value at 250k timesteps
+        [400000, 0.01],     # <- value at 400k timesteps
     ],       
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter
