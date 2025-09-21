@@ -26,10 +26,10 @@ ENV_CONFIG = {
     'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
-    'num_seconds': 1800,      # Total simulation time
+    'num_seconds': 3600,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
     'yellow_time': 3,          # Length of yellow phase
-    'min_green': 8,            # Minimum green time
+    'min_green': 10,            # Minimum green time
     'max_green': 60,           # Maximum green time
     'single_agent': False,     # Multi-agent setup
     'reward_fn': 'diff-waiting-time',  # computed based on changes during each delta_time window
@@ -40,13 +40,14 @@ ENV_CONFIG = {
 
 # ! ------- Algorithm hyperparams -------
 
-# PPO Hyperparameters  - Thiviru
+# PPO Hyperparameters 
 PPO_hparams = {
     'lr': 1e-4,            
     'train_batch_size_per_learner': 256,  # Batch size per learner
     'entropy_coeff' : [              # Entropy coefficient for exploration
         [0, 0.1],          # <- initial value at timestep 0
-        [100000, 0.05],     # <- value at 100k timesteps
+        [100000, 0.06],     # <- value at 100k timesteps
+        [250000, 0.02],     # <- value at 250k timesteps
     ],       
     'kl_coeff': 0.2,               # KL divergence coefficient
     'clip_param': 0.2,             # PPO clipping parameter
@@ -58,7 +59,7 @@ PPO_hparams = {
     'grad_clip': 0.5,              # Gradient clipping
 }
 
-# DQN Hyperparameters  - NPC or Jake
+# DQN Hyperparameters  
 DQN_hparams = {
     "learning_starts": 5000,       # Start training after this many steps
     "train_batch_size": 32,        # Batch size for training
@@ -80,7 +81,7 @@ DQN_hparams = {
     "n_step": 1,                   # N-step returns
 }
 
-# SAC Hyperparameters - Jake
+# SAC Hyperparameters
 SAC_hparams = {
     "twin_q": True,                # Use two Q-networks for the critics, to mitigate overestimation bias
     "gamma": 0.99,                 #discount factor
