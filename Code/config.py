@@ -26,7 +26,7 @@ ENV_CONFIG = {
     'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
-    'num_seconds': 20000,      # Total simulation time
+    'num_seconds': 12000,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
     'yellow_time': 2,          # Length of yellow phase
     'min_green': 6,            # Minimum green time
@@ -40,7 +40,7 @@ ENV_CONFIG = {
 # ! ------- Algorithm hyperparams -------
 
 # PPO Hyperparameters 
-PPO_hparams = {
+PPO_hparams = { # ! might need to add rollout fragment length in env_runners
     'lr': [
         [0, 5e-4],         # <- initial learning rate at timestep 0
         [100000, 1e-4],    # <- learning rate at 100k timesteps
