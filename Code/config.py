@@ -4,7 +4,7 @@ import os
 # ! Training config vars
 ARG_DICT = {
     "ppo" : {
-        "n_iterations": 2000,   
+        "n_iterations": 500,   
         "chkpoint_eval_freq": 20 # checkpointing and training eval freq
     },
 
@@ -26,11 +26,10 @@ ENV_CONFIG = {
     'route_file': os.path.abspath('src/sumo-rl/sumo_rl/nets/2x2grid/2x2.rou.xml'),
     'out_csv_name': os.path.abspath("Code/outputs/logs/logs"),
     'use_gui': False,
-    'num_seconds': 3600,      # Total simulation time
+    'num_seconds': 20000,      # Total simulation time
     'delta_time': 5,           # Length of a simulation step (seconds)
-    'yellow_time': 3,          # Length of yellow phase
-    'min_green': 10,            # Minimum green time
-    'max_green': 60,           # Maximum green time
+    'yellow_time': 2,          # Length of yellow phase
+    'min_green': 6,            # Minimum green time
     'single_agent': False,     # Multi-agent setup
     'reward_fn': 'diff-waiting-time',  # computed based on changes during each delta_time window
     'add_per_agent_info': True,

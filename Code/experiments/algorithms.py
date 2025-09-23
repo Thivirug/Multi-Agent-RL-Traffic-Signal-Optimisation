@@ -91,7 +91,7 @@ class AlgoConfigFactory:
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
             .env_runners(num_env_runners=1, num_gpus_per_env_runner=1)
-            .learners(num_learners=2, num_cpus_per_learner=2)
+            .learners(num_learners=2, num_cpus_per_learner=5)
             .training(**ppo_hparams)
             .evaluation(
                 evaluation_interval=10,
