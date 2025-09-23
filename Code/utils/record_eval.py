@@ -114,7 +114,7 @@ def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, is_
     height, width, _ = frame.shape
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
     return (
-         cv2.VideoWriter(video_filename, fourcc, 5.0, (width, height)), # Lower FPS to match slowed pace
+         cv2.VideoWriter(video_filename, fourcc, 10.0, (width, height)),
          frame # return initial frame for writing
         )  
 
@@ -174,7 +174,7 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
         time.sleep(5)  # Allow TraCI to stabilize
 
         rewards = {agent: 0 for agent in env.possible_agents}
-        print(f"Starting episode {ep+1}... (rendering video at slowed pace)")
+        print(f"Starting episode {ep+1}... ")
 
         out, initial_frame = _init_video_rec(video_dir, algo_name, ep, max_steps, is_greedy, env)
         out.write(cv2.cvtColor(initial_frame, cv2.COLOR_RGB2BGR))  # Write initial frame
@@ -191,8 +191,6 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
             # accumulate rewards for each agent
             for agent_id, r in rew.items():
                 rewards[agent_id] += r
-
-            time.sleep(0.5)  # Slow down for visibility in video
 
             # check for episode termination (all agents must be done)
             if all(terminated.values()) or all(truncated.values()):
@@ -220,8 +218,9 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
 
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
-        print(f"\nAgent {agent_id}: mean reward = {np.mean(rewards)}")
-        print(f"\tAgent {agent_id}: std reward = {np.std(rewards)}")
+        print(f"\nAgent {agent_id}:")
+        print(f"\tmean reward = {np.mean(rewards)}")
+        print(f"\tstd reward = {np.std(rewards)}")
 
 if __name__ == "__main__":
     args = _parse_args()
