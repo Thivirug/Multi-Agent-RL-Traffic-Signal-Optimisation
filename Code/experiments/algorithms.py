@@ -94,7 +94,9 @@ class AlgoConfigFactory:
             .learners(num_learners=2, num_cpus_per_learner=5)
             .training(**ppo_hparams)
             .evaluation(
-                evaluation_interval=None
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
             )
         )
         
@@ -116,7 +118,9 @@ class AlgoConfigFactory:
             .learners(num_learners=2, num_cpus_per_learner=7) # ! CHANGE THESE FOR UR PC REQS
             .training(**dqn_hparams)
             .evaluation(
-                evaluation_interval=None
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
             )
         )
         
@@ -139,7 +143,9 @@ class AlgoConfigFactory:
             .learners(num_learners=1, num_cpus_per_learner=4, num_gpus_per_learner=1) # ! CHANGE THESE FOR UR PC REQS
             .training(**sac_hparams)
             .evaluation(
-                evaluation_interval=None
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
             )
         )
         
