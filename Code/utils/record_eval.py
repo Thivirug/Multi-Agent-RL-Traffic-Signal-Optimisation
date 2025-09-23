@@ -1,7 +1,12 @@
+import os
+os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'  # Fix for Xvfb timeout
+
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-import os
+import logging
+logging.getLogger('pyvirtualdisplay').setLevel(logging.ERROR)
+
 import numpy as np
 from Code.config import ENV_CONFIG
 from Code.experiments.algorithms import AlgoConfigFactory
@@ -13,20 +18,17 @@ from ray.rllib.algorithms.sac import SAC
 import torch
 from tqdm import trange
 import argparse
-import subprocess
+from pyvirtualdisplay import Display  # Import after env var
 import time
-import ray
+import cv2
 
 def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes: int = 5) -> None:
-    # Initialize Ray with single process to avoid conflicts
-    ray.init(num_cpus=1, ignore_reinit_error=True)
-
     # Create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
     local_config.update({
-        'use_gui': True,  # Enable SUMO GUI for recording
-        'num_seconds': max_steps * local_config['delta_time'],  # Duration based on delta_time
-        'additional_sumo_cmd': '--remote-port 8813 --step-length 5.0'  # Explicit port and step length
+        'use_gui': False,  # Headless for rgb_array
+        'num_seconds': max_steps * local_config['delta_time'],
+        'render_mode': 'rgb_array'
     })
     factory = AlgoConfigFactory(local_config)
     register_env(
@@ -76,34 +78,41 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
             actions_dict[agent_id] = actions[i]
 
         return actions_dict
-    
+
+    # Setup virtual display with improved error handling
+    display = None
+    try:
+        display = Display(visible=0, size=(1280, 720))
+        display.start()
+        print("Virtual display started successfully.")
+        time.sleep(2)  # Allow display to initialize
+    except Exception as e:
+        print(f"Virtual display failed to start: {e}. Continuing without it (ensure native GUI is available).")
+        display = None
+
     # Run eval loop for defined episodes
     for ep in trange(num_episodes):
         obs, _ = env.reset()
         time.sleep(5)  # Allow TraCI to stabilize
 
         rewards = {agent: 0 for agent in env.possible_agents}
-        print(f"Starting episode {ep+1}... (watch SUMO-GUI)")
+        print(f"Starting episode {ep+1}... (rendering video)")
 
-        # Start ffmpeg recording (automated)
+        # Initialize video writer with OpenCV
         video_dir = os.path.join(os.path.abspath("Code/outputs"), 'recordings')
         os.makedirs(video_dir, exist_ok=True)
         video_filename = os.path.join(video_dir, f'{algo_name}_episode_{ep+1}.mp4')
-        ffmpeg_cmd = [
-            'ffmpeg',
-            '-f', 'x11grab',
-            '-video_size', '1280x720',  # Adjust to your SUMO window size
-            '-i', ':0.0',  # Display :0 (default GUI display)
-            '-c:v', 'libx264',
-            '-preset', 'ultrafast',
-            '-y',  # Overwrite output files
-            video_filename
-        ]
-        ffmpeg_process = subprocess.Popen(ffmpeg_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        frame = env.render()  # Get initial frame to determine size
+        height, width, layers = frame.shape
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
+        out = cv2.VideoWriter(video_filename, fourcc, 30.0, (width, height))
+        out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write initial frame (RGB to BGR for OpenCV)
 
         while True:
             actions_dict = compute_actions(module, obs)
             obs, rew, terminated, truncated, _ = env.step(actions_dict)
+            frame = env.render()
+            out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write frame
 
             for agent_id, r in rew.items():
                 rewards[agent_id] += r
@@ -111,9 +120,9 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
             if all(terminated.values()) or all(truncated.values()):
                 break
 
-        # Stop ffmpeg recording
-        ffmpeg_process.terminate()
-        time.sleep(1)  # Allow ffmpeg to finalize
+        # Release video writer
+        out.release()
+        print(f"Video saved for episode {ep+1} at {video_filename}")
 
         # Store rewards
         for agent_id in env.possible_agents:
@@ -124,10 +133,10 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
             print(f"\n\tAgent {agent_id}: Reward = {rewards[agent_id]}")
 
         print()  # For aesthetics
-        print(f"Video saved for episode {ep+1} at {video_filename}")
 
     env.close()
-    ray.shutdown()
+    if display:
+        display.stop()
 
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
