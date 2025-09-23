@@ -1,5 +1,5 @@
 import os
-os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'  # Fix for Xvfb timeout
+os.environ['PYVIRTUALDISPLAY_DISPLAYFD'] = '0'  
 
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -12,21 +12,35 @@ from Code.config import ENV_CONFIG
 from Code.experiments.algorithms import AlgoConfigFactory
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
+from ray.rllib.algorithms.ppo.torch.default_ppo_torch_rl_module import DefaultPPOTorchRLModule
+from ray.rllib.core.distribution.torch.torch_distribution import TorchCategorical
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.dqn import DQN
 from ray.rllib.algorithms.sac import SAC
 import torch
 from tqdm import trange
 import argparse
-from pyvirtualdisplay import Display  # Import after env var
+from pyvirtualdisplay import Display  
 import time
 import cv2
+import pettingzoo
+import abc
 
-def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes: int = 5) -> None:
-    # Create factory and register environment with local config override
-    local_config = ENV_CONFIG.copy()
+def _get_env(max_steps: int, env_config: dict) -> pettingzoo.utils.conversions.aec_to_parallel_wrapper:
+    """
+        Create a parallel env in SUMO with the configs required for evaluation and recording.
+
+        Args:
+            max_steps (int): Max steps per episode. 
+            env_config (dict): Base environment configuration.
+
+        Returns:
+            The updated environment for eval and recording.
+    """
+    # create factory and register environment with local config override
+    local_config = env_config.copy()
     local_config.update({
-        'use_gui': False,  # Headless for rgb_array
+        'use_gui': False,  # headless for rgb_array
         'num_seconds': max_steps * local_config['delta_time'],
         'render_mode': 'rgb_array'
     })
@@ -36,8 +50,92 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         env_creator=lambda config: ParallelPettingZooEnv(factory._create_env(config))
     )
 
-    # Create env with updated config for eval
-    env = factory._create_env(local_config)
+    # create env for evaluation
+    return factory._create_env(local_config)
+
+def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper, is_greedy: bool) -> dict:
+        """
+            Get actions executed by each agent and create a dict to pass into env.step().
+
+            Args:
+                module (DefaultPPOTorchRLModule): The trained policy module.
+                obs (dict): Current observations from all agents.
+                env (pettingzoo.utils.conversions.aec_to_parallel_wrapper): The environment instance.
+                is_greedy (bool): Whether to use greedy action selection or sample.
+
+            Returns:
+                Actions for each agent.
+        """
+        obs_array = np.array(list(obs.values()), dtype=np.float32)   # Ensure ndarray
+        obs_tensor = torch.from_numpy(obs_array).unsqueeze(0)  # Add batch dim
+
+        actions_dict = {}
+
+        # forward pass through the policy - get action logits
+        out = module.forward_inference({"obs": obs_tensor})
+
+        # ! actions selection 
+
+        # retrieve the class for the action distribution used during inference
+        action_dist_class: abc.ABCMeta = module.get_inference_action_dist_cls()
+
+        # get probability distribution over actions
+        action_dist: TorchCategorical = action_dist_class.from_logits(out["action_dist_inputs"])
+
+        if is_greedy:
+            actions: np.ndarray = action_dist.to_deterministic().sample()[0].numpy()
+        else:
+            actions: np.ndarray = action_dist.sample()[0].numpy()
+
+        # Create the actions dictionary
+        for i, agent_id in enumerate(env.possible_agents):
+            actions_dict[agent_id] = actions[i]
+
+        return actions_dict
+
+def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, is_greedy: bool, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
+    """
+        Initialise video recording setup.
+
+        Args:
+            video_dir (str): Directory to save videos.
+            algo_name (str): Algorithm name for filename.
+            ep (int): Current episode number.
+            max_steps (int): Max steps per episode.
+            is_greedy (bool): Whether greedy action selection is used.
+            env (pettingzoo.utils.conversions.aec_to_parallel_wrapper): The environment instance.
+
+        Returns:
+            A tuple of (cv2.VideoWriter object, initial frame ndarray).
+    """
+    # Initialise video writer with OpenCV
+    video_filename = os.path.join(video_dir, f'{algo_name}_episode_{ep+1}_max_steps_{max_steps}_is_greedy_{is_greedy}.mp4')
+    frame = env.render()  # Get initial frame to determine dims
+    height, width, _ = frame.shape
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
+    return (
+         cv2.VideoWriter(video_filename, fourcc, 5.0, (width, height)), # Lower FPS to match slowed pace
+         frame # return initial frame for writing
+        )  
+
+def _parse_args() -> argparse.Namespace:
+    """
+        Parse given args from the terminal and return them to the program.
+    """
+    p = argparse.ArgumentParser(description="Evaluate trained multi-agent algorithm checkpoint")
+    # mandatory args
+    p.add_argument("algo", help="Algorithm used for evaluation")
+    p.add_argument("checkpoint", help="Path to checkpoint (directory)")
+    p.add_argument("greedy", help="Use greedy action selection")
+
+    # optional args
+    p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
+    p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
+    return p.parse_args()
+
+def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 20, num_episodes: int = 5) -> None:
+    # get eval env
+    env = _get_env(max_steps, ENV_CONFIG)
 
     # Restore the required algorithm from checkpoint
     match algo_name:
@@ -55,30 +153,6 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
     # Get the trained module (policy) by ID
     module = algo.get_module("shared_policy")  
 
-    # Inner helper function
-    def compute_actions(module, obs: dict) -> dict:
-        """
-        Get actions executed by each agent and create a dict to pass into env.step().
-        """
-        obs_array = np.array(list(obs.values()), dtype=np.float32)   # Ensure ndarray
-        obs_tensor = torch.from_numpy(obs_array).unsqueeze(0)  # Add batch dim
-
-        actions_dict = {}
-
-        # Forward pass through the policy
-        out = module.forward_inference({"obs": obs_tensor})
-
-        # Sample the best action
-        action_dist_class = module.get_inference_action_dist_cls()
-        action_dist = action_dist_class.from_logits(out["action_dist_inputs"])
-        actions = action_dist.sample()[0].numpy()
-
-        # Create the actions dictionary
-        for i, agent_id in enumerate(env.possible_agents):
-            actions_dict[agent_id] = actions[i]
-
-        return actions_dict
-
     # Setup virtual display
     display = None
     try:
@@ -87,8 +161,12 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         print("Virtual display started successfully.")
         time.sleep(2)  # Allow display to initialize
     except Exception as e:
-        print(f"Virtual display failed to start: {e}. Continuing without it (ensure native GUI is available).")
+        print(f"Virtual display failed to start: {e}.")
         display = None
+
+    # Directory to save videos
+    video_dir = os.path.join(os.path.abspath("Code/outputs"), 'recordings')
+    os.makedirs(video_dir, exist_ok=True)
 
     # Run eval loop for defined episodes
     for ep in trange(num_episodes):
@@ -98,35 +176,33 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         rewards = {agent: 0 for agent in env.possible_agents}
         print(f"Starting episode {ep+1}... (rendering video at slowed pace)")
 
-        # Initialize video writer with OpenCV
-        video_dir = os.path.join(os.path.abspath("Code/outputs"), 'recordings')
-        os.makedirs(video_dir, exist_ok=True)
-        video_filename = os.path.join(video_dir, f'{algo_name}_episode_{ep+1}.mp4')
-        frame = env.render()  # Get initial frame to determine size
-        height, width, layers = frame.shape
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
-        out = cv2.VideoWriter(video_filename, fourcc, 5.0, (width, height))  # Lower FPS to match slowed pace
-        out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write initial frame
+        out, initial_frame = _init_video_rec(video_dir, algo_name, ep, max_steps, is_greedy, env)
+        out.write(cv2.cvtColor(initial_frame, cv2.COLOR_RGB2BGR))  # Write initial frame
 
         while True:
-            actions_dict = compute_actions(module, obs)
+            # get the actions for all agents
+            actions_dict = _compute_actions(module, obs, env, is_greedy)
+
             obs, rew, terminated, truncated, _ = env.step(actions_dict)
-            frame = env.render()
+
+            frame = env.render() # Get frame after step
             out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write frame
 
+            # accumulate rewards for each agent
             for agent_id, r in rew.items():
                 rewards[agent_id] += r
 
-            time.sleep(0.2)  # Slow down to 5 FPS (visible pace; adjust 0.1 for faster, 0.5 for slower)
+            time.sleep(0.5)  # Slow down for visibility in video
 
+            # check for episode termination (all agents must be done)
             if all(terminated.values()) or all(truncated.values()):
                 break
 
-        # Release video writer
+        # release resources
         out.release()
-        print(f"Video saved for episode {ep+1} at {video_filename}")
+        print(f"Video saved for episode {ep+1}... ")
 
-        # Store rewards
+        # store rewards
         for agent_id in env.possible_agents:
             episode_rewards[agent_id].append(rewards[agent_id])
 
@@ -137,26 +213,19 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         print()  # For aesthetics
 
     env.close()
+
+    # stop virtual display
     if display:
         display.stop()
 
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
         print(f"\nAgent {agent_id}: mean reward = {np.mean(rewards)}")
-
-def _parse_args() -> argparse.Namespace:
-    """
-    Parse given args from the terminal and return them to the program.
-    """
-    p = argparse.ArgumentParser(description="Evaluate trained multi-agent algorithm checkpoint")
-    p.add_argument("algo", help="Algorithm used for evaluation")
-    p.add_argument("checkpoint", help="Path to checkpoint (directory)")
-    p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
-    p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
-    return p.parse_args()
+        print(f"\tAgent {agent_id}: std reward = {np.std(rewards)}")
 
 if __name__ == "__main__":
     args = _parse_args()
     checkpoint_path = os.path.abspath(args.checkpoint)
     algoname = args.algo
-    main(checkpoint_path, algoname, max_steps=args.max_steps, num_episodes=args.episodes)
+    is_greedy = args.greedy.lower() in ['true', '1', 'yes'] # convert to bool
+    main(checkpoint_path, algoname, is_greedy, max_steps=args.max_steps, num_episodes=args.episodes)
