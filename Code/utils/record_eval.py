@@ -79,7 +79,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
 
         return actions_dict
 
-    # Setup virtual display with improved error handling
+    # Setup virtual display
     display = None
     try:
         display = Display(visible=0, size=(1280, 720))
@@ -96,7 +96,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         time.sleep(5)  # Allow TraCI to stabilize
 
         rewards = {agent: 0 for agent in env.possible_agents}
-        print(f"Starting episode {ep+1}... (rendering video)")
+        print(f"Starting episode {ep+1}... (rendering video at slowed pace)")
 
         # Initialize video writer with OpenCV
         video_dir = os.path.join(os.path.abspath("Code/outputs"), 'recordings')
@@ -105,8 +105,8 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         frame = env.render()  # Get initial frame to determine size
         height, width, layers = frame.shape
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
-        out = cv2.VideoWriter(video_filename, fourcc, 30.0, (width, height))
-        out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write initial frame (RGB to BGR for OpenCV)
+        out = cv2.VideoWriter(video_filename, fourcc, 5.0, (width, height))  # Lower FPS to match slowed pace
+        out.write(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))  # Write initial frame
 
         while True:
             actions_dict = compute_actions(module, obs)
@@ -116,6 +116,8 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
 
             for agent_id, r in rew.items():
                 rewards[agent_id] += r
+
+            time.sleep(0.2)  # Slow down to 5 FPS (visible pace; adjust 0.1 for faster, 0.5 for slower)
 
             if all(terminated.values()) or all(truncated.values()):
                 break
