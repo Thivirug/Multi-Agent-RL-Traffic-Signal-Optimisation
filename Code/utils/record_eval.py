@@ -93,7 +93,7 @@ def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo
 
         return actions_dict
 
-def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, is_greedy: bool, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
+def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int, max_steps: int, is_greedy: bool, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
     """
         Initialise video recording setup for given episode.
 
@@ -109,15 +109,40 @@ def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, is_
             A tuple of (cv2.VideoWriter object, initial frame ndarray).
     """
     # Initialise video writer with OpenCV
-    video_filename = os.path.join(video_dir, f'{algo_name}_episode_{ep+1}_max_steps_{max_steps}_is_greedy_{is_greedy}.mp4')
+    video_filename = os.path.join(
+        video_dir, 
+        f'algorithm: {algo_name}_episode: {ep+1}_iter: {_get_chkpoint_iteration(checkpoint_dir)}_max_steps: {max_steps}_is_greedy: {is_greedy}.mp4'
+    )
+
     frame = env.render()  # Get initial frame to determine dims
     height, width, _ = frame.shape
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Codec
+
     return (
          cv2.VideoWriter(video_filename, fourcc, 10.0, (width, height)),
          frame # return initial frame for writing
-        )  
+    )  
 
+def _get_chkpoint_iteration(checkpoint_dir: str) -> int:
+    """
+        Extract the training iteration number from the checkpoint directory name.
+
+        Args:
+            checkpoint_dir (str): Path to the checkpoint directory.
+
+        Returns:
+            The iteration number as an integer.
+
+        Raises:
+            ValueError: If the iteration number cannot be extracted.
+    """
+    # this extraction gives exactly the iteration number
+    try:
+        base_name = os.path.basename(checkpoint_dir)
+        return int(base_name)
+    except Exception as e:
+        raise ValueError(f"Could not extract iteration number from checkpoint directory name '{checkpoint_dir}'. Ensure it ends with the iteration number.") from e
+    
 def _parse_args() -> argparse.Namespace:
     """
         Parse given args from the terminal and return them to the program.
@@ -176,7 +201,7 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
         rewards = {agent: 0 for agent in env.possible_agents}
         print(f"Starting episode {ep+1}... ")
 
-        out, initial_frame = _init_video_rec(video_dir, algo_name, ep, max_steps, is_greedy, env)
+        out, initial_frame = _init_video_rec(video_dir, checkpoint_dir, algo_name, ep, max_steps, is_greedy, env)
         out.write(cv2.cvtColor(initial_frame, cv2.COLOR_RGB2BGR))  # Write initial frame
 
         while True:
@@ -225,6 +250,5 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
 if __name__ == "__main__":
     args = _parse_args()
     checkpoint_path = os.path.abspath(args.checkpoint)
-    algoname = args.algo
     is_greedy = args.greedy.lower() in ['true', '1', 'yes'] # convert to bool
-    main(checkpoint_path, algoname, is_greedy, max_steps=args.max_steps, num_episodes=args.episodes)
+    main(checkpoint_path, args.algo, is_greedy, args.max_steps, args.episodes)
