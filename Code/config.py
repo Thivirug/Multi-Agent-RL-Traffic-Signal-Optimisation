@@ -65,8 +65,7 @@ PPO_hparams = { # ! might need to add rollout fragment length in env_runners
 
 # DQN Hyperparameters  
 DQN_hparams = {
-    "learning_starts": 5000,       # Start training after this many steps
-    "train_batch_size": 32,        # Batch size for training
+    "train_batch_size_per_learner": 32,        # Batch size for training
     "lr": 1e-4,                    # Learning rate
     "gamma": 0.99,                 # Discount factor
     "target_network_update_freq": 1000,  # Target network update frequency
@@ -74,15 +73,12 @@ DQN_hparams = {
         "type": "MultiAgentReplayBuffer",
         "capacity": 100000,        # Replay buffer size
     },
-    "exploration_config": {
-        "type": "EpsilonGreedy",
-        "initial_epsilon": 1.0,    # Initial exploration rate
-        "final_epsilon": 0.02,     # Final exploration rate
-        "epsilon_timesteps": 200000,  # Steps to decay epsilon
-    },
+    'epsilon' : [         
+        [0, 0.5],          # <- initial value at timestep 0
+        [100000, 0.06],     # <- value at 100k timesteps
+    ], 
     "double_q": True,              # Use double Q-learning
     "dueling": True,               # Use dueling network architecture
-    "n_step": 1,                   # N-step returns
 }
 
 # SAC Hyperparameters
