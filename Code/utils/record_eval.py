@@ -95,7 +95,7 @@ def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo
 
 def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, is_greedy: bool, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
     """
-        Initialise video recording setup.
+        Initialise video recording setup for given episode.
 
         Args:
             video_dir (str): Directory to save videos.
