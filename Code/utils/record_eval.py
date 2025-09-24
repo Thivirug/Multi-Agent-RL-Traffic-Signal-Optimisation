@@ -111,7 +111,7 @@ def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int
     # Initialise video writer with OpenCV
     video_filename = os.path.join(
         video_dir, 
-        f'algorithm: {algo_name}_episode: {ep+1}_iter: {_get_chkpoint_iteration(checkpoint_dir)}_max_steps: {max_steps}_is_greedy: {is_greedy}.mp4'
+        f'algorithm_{algo_name}_episode#_{ep+1}_iteration#_{_get_chkpoint_iteration(checkpoint_dir)}_max_steps_{max_steps}_is_greedy_{is_greedy}.mp4'
     )
 
     frame = env.render()  # Get initial frame to determine dims
