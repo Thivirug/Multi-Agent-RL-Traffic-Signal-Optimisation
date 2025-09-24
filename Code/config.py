@@ -65,7 +65,7 @@ PPO_hparams = { # ! might need to add rollout fragment length in env_runners
 
 # DQN Hyperparameters  
 DQN_hparams = {
-    "train_batch_size_per_learner": 32,        # Batch size for training
+    "train_batch_size_per_learner": 64,        # Batch size for training
     "lr": 1e-4,                    # Learning rate
     "gamma": 0.99,                 # Discount factor
     "target_network_update_freq": 1000,  # Target network update frequency
