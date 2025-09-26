@@ -190,7 +190,7 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
         display = None
 
     # Directory to save videos
-    video_dir = os.path.join(os.path.abspath("Code/outputs"), 'recordings')
+    video_dir = os.path.join(os.path.abspath("Code/outputs/recordings"), f"{algo_name}")
     os.makedirs(video_dir, exist_ok=True)
 
     # Run eval loop for defined episodes
