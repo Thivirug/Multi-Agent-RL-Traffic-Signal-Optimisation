@@ -124,8 +124,11 @@ def plot_mean_ep_reward(df: pd.DataFrame, algo_name: str) -> None:
     plt.grid(True)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
-    plt.savefig(os.path.join(PLOTS_PARENT_PATH, 'mean_episode_reward.png'))
-    print(f"Plot saved to {os.path.join(PLOTS_PARENT_PATH, 'mean_episode_reward.png')}")
+
+    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", 'mean_episode_reward.png')
+    os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
+    plt.savefig(SAVE_PATH)
+    print(f"Plot saved to {SAVE_PATH}")
 
 def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list, algo_name: str) -> None:
     """
@@ -168,8 +171,11 @@ def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list, algo_name:
     plt.legend(title="Agent ID", title_fontsize=20, fontsize=16, loc='lower right')
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
-    plt.savefig(os.path.join(PLOTS_PARENT_PATH, 'mean_reward_per_agent.png'))
-    print(f"Plot saved to {os.path.join(PLOTS_PARENT_PATH, 'mean_reward_per_agent.png')}")
+    
+    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", 'all_agents_mean_episode_reward.png')
+    os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
+    plt.savefig(SAVE_PATH)
+    print(f"Plot saved to {SAVE_PATH}")
 
 def _argparse() -> argparse.Namespace:
     """
