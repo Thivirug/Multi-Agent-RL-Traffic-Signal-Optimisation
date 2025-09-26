@@ -37,19 +37,26 @@ def rename_logs(iter_n: int) -> None:
             os.rename(os.path.join(logs_dir, filename), os.path.join(logs_dir, new_filename))
 
 def main() -> None:
-    # create and register env 
-    factory = AlgoConfigFactory(ENV_CONFIG)
+    # # create and register env 
+    # factory = AlgoConfigFactory(ENV_CONFIG)
 
-    # register our env
-    register_env(
-        name = "sumo_multi_agent",
-        env_creator = lambda config: ParallelPettingZooEnv(factory._create_env(config))
-    )
+    # # register our env
+    # register_env(
+    #     name = "sumo_multi_agent",
+    #     env_creator = lambda config: ParallelPettingZooEnv(factory._create_env(config))
+    # )
     
     # get algo config 
     print("\n ====== TRAINING START ======\n")
     print("Algorithm Options: ppo, dqn, sac")
     algo_name = input("Training algorithm: --> ")
+
+    # update logs path with algo name
+    ENV_CONFIG.update({
+        'out_csv_name': os.path.abspath(f"Code/outputs/logs/{algo_name}/logs")
+    })
+    # create and register env 
+    factory = AlgoConfigFactory(ENV_CONFIG)
 
     # get config
     match algo_name:
@@ -61,6 +68,12 @@ def main() -> None:
             config = factory.get_sac_config(SAC_hparams)
         case _:
             raise ValueError("Algorithm can be ppo, dqn, or sac only !")
+        
+    # register our env
+    register_env(
+        name = "sumo_multi_agent",
+        env_creator = lambda config: ParallelPettingZooEnv(factory._create_env(config))
+    )
 
     # use algorithm specific args
     n_iterations = ARG_DICT[algo_name]['n_iterations']
