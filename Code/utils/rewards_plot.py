@@ -8,7 +8,7 @@ from Code.config import ENV_CONFIG
 import pettingzoo
 import argparse
 
-PLOTS_PARENT_PATH = os.path.abspath("Code/outputs/plots/rewards")
+PLOTS_PARENT_PATH = os.path.abspath("Code/outputs/plots")
 os.makedirs(PLOTS_PARENT_PATH, exist_ok=True)
 
 # ! --------------------------------------- HELPER Funcs -------------------------------------------
@@ -125,7 +125,7 @@ def plot_mean_ep_reward(df: pd.DataFrame, algo_name: str) -> None:
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
 
-    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", 'mean_episode_reward.png')
+    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", "rewards", 'mean_episode_reward.png')
     os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
     plt.savefig(SAVE_PATH)
     print(f"Plot saved to {SAVE_PATH}")
@@ -172,7 +172,7 @@ def plot_all_agents_mean_ep_reward(df: pd.DataFrame, agent_ids: list, algo_name:
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     
-    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", 'all_agents_mean_episode_reward.png')
+    SAVE_PATH = os.path.join(PLOTS_PARENT_PATH, f"{algo_name}", "rewards",'all_agents_mean_episode_reward.png')
     os.makedirs(os.path.dirname(SAVE_PATH), exist_ok=True)
     plt.savefig(SAVE_PATH)
     print(f"Plot saved to {SAVE_PATH}")
