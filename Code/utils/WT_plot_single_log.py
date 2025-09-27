@@ -20,7 +20,7 @@ NEEDED_COL_NAMES = [
 ]
 
 # ! Plot 1: Individual Time Series Plots
-def plot_time_series_individual(df: pd.DataFrame, algo_name: str, save_dir: str = "Code/outputs/plots") -> None:
+def plot_time_series_individual(df: pd.DataFrame, algo_name: str, iter_num: int, epi_num: int, save_dir: str = "Code/outputs/plots") -> None:
     """
         Creates separate plots for each waiting time metric over simulation steps.
 
@@ -61,13 +61,13 @@ def plot_time_series_individual(df: pd.DataFrame, algo_name: str, save_dir: str 
         plt.tight_layout()
         
         # create output directory
-        SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time", "individual")
+        SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time_singleLog", f"Iter_{iter_num}_epi_{epi_num}", "individual")
         os.makedirs(SAVE_DIR, exist_ok=True)
         plt.savefig(f"{SAVE_DIR}/{col}.png", dpi=300, bbox_inches='tight')
         plt.show()
 
 # ! Plot 2: Combined Time Series Plot
-def plot_time_series_combined(df: pd.DataFrame, algo_name: str, save_dir: str = "Code/outputs/plots") -> None:
+def plot_time_series_combined(df: pd.DataFrame, algo_name: str, iter_num: int, epi_num: int, save_dir: str = "Code/outputs/plots") -> None:
     """
         Shows multiple metrics on the same plot for comparison.
         (Useful for understanding relationships between different waiting time metrics.)
@@ -128,7 +128,7 @@ def plot_time_series_combined(df: pd.DataFrame, algo_name: str, save_dir: str = 
     plt.tight_layout()
 
     # create output directory
-    SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time", "combined")
+    SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time_singleLog", f"{iter_num}_{epi_num}", "combined")
     os.makedirs(SAVE_DIR, exist_ok=True)
     plt.savefig(f"{SAVE_DIR}/combined_time_series.png", dpi=300, bbox_inches='tight')
     plt.show()
@@ -139,22 +139,35 @@ def _argparse() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(description="Plot waiting time metrics from the csv file for the given algorithm")
     parser.add_argument("algo", help="Algorithm used for evaluation (ppo/dqn/sac)")
+    parser.add_argument("log_file", help="Log file name to process (e.g., logs_conn0_ep1_iter0.csv)")
     return parser.parse_args()
+
+def _parse_log_deets(log_file: str) -> tuple[int, int]:
+    """
+        Extract iteration number and episode number from the log file name.
+        Expected example format: logs_conn0_ep1_iter0.csv
+    """
+    parts = log_file.split('_')
+    iter_num = int(parts[3].replace('iter', '').replace('.csv', ''))
+    epi_num = int(parts[2].replace('ep', ''))
+    return iter_num, epi_num
 
 def main():
     # argparse
     args = _argparse()
     algo = args.algo
+    log_file = args.log_file
+
     # Load and process data
-    log_file = f"logs_conn1_ep991_iter499.csv"
     df = pd.read_csv(os.path.join(LOGS_DIR, algo, log_file))
+    iter_num, epi_num = _parse_log_deets(log_file)
 
     # Filter needed columns only
     df = df[NEEDED_COL_NAMES]
 
     # Create enhanced plots
-    plot_time_series_individual(df, algo)
-    plot_time_series_combined(df, algo)
+    plot_time_series_individual(df, algo, iter_num, epi_num)
+    plot_time_series_combined(df, algo, iter_num, epi_num)
 
 if __name__ == "__main__":
     main()
