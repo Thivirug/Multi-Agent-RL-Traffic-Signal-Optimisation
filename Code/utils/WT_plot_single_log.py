@@ -64,7 +64,6 @@ def plot_time_series_individual(df: pd.DataFrame, algo_name: str, iter_num: int,
         SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time_singleLog", f"Iter_{iter_num}_epi_{epi_num}", "individual")
         os.makedirs(SAVE_DIR, exist_ok=True)
         plt.savefig(f"{SAVE_DIR}/{col}.png", dpi=300, bbox_inches='tight')
-        plt.show()
 
 # ! Plot 2: Combined Time Series Plot
 def plot_time_series_combined(df: pd.DataFrame, algo_name: str, iter_num: int, epi_num: int, save_dir: str = "Code/outputs/plots") -> None:
@@ -128,10 +127,9 @@ def plot_time_series_combined(df: pd.DataFrame, algo_name: str, iter_num: int, e
     plt.tight_layout()
 
     # create output directory
-    SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time_singleLog", f"{iter_num}_{epi_num}", "combined")
+    SAVE_DIR = os.path.join(save_dir, algo_name, "waiting_time_singleLog", f"Iter_{iter_num}_epi_{epi_num}", "combined")
     os.makedirs(SAVE_DIR, exist_ok=True)
     plt.savefig(f"{SAVE_DIR}/combined_time_series.png", dpi=300, bbox_inches='tight')
-    plt.show()
 
 def _argparse() -> argparse.Namespace:
     """
@@ -165,7 +163,6 @@ def main():
     # Filter needed columns only
     df = df[NEEDED_COL_NAMES]
 
-    # Create enhanced plots
     plot_time_series_individual(df, algo, iter_num, epi_num)
     plot_time_series_combined(df, algo, iter_num, epi_num)
 
