@@ -1,8 +1,11 @@
 import os
-import re
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+# Set up plotting style
+plt.style.use('seaborn-v0_8')
+sns.set_palette("husl")
 
 LOGS_DIR = os.path.abspath("Code/outputs/logs")
 NEEDED_COL_NAMES = [
@@ -15,27 +18,116 @@ NEEDED_COL_NAMES = [
     "agents_total_accumulated_waiting_time"
 ]
 
-# print(f"There are {len(os.listdir(LOGS_DIR))} log files")
+# ! Plot 1: Individual Time Series Plots
+def plot_time_series_individual(df: pd.DataFrame, save_dir: str = "Code/outputs/plots/ppo/waiting_time/individual") -> None:
+    """
+        Creates separate plots for each waiting time metric over simulation steps.
 
-# # pattern = re.compile(r"(logs_conn\d+_ep\d+)\.csv")
+        Args:
+            df (pd.DataFrame): DataFrame containing waiting time metrics.
+            save_dir (str): Directory to save the plots.
+    """
+    print("Creating individual time series plots...")
+    
+    # create output directory
+    os.makedirs(save_dir, exist_ok=True)
+    
+    for col in df.columns:
+        plt.figure(figsize=(12, 6))
+        
+        sns.lineplot(data=df, x=df.index, y=col, linewidth=2.5, alpha=0.8)
+        
+        plt.title(f"Traffic Signal Waiting Time: {col.replace('_', ' ').title()}", 
+                 fontsize=16, fontweight='bold', pad=20)
+        plt.xlabel("Simulation Time Step", fontsize=12)
+        plt.ylabel("Waiting Time (seconds)", fontsize=12)
+        plt.grid(True, alpha=0.3, linestyle='--')
+        
+        # statistics annotation
+        mean_val = df[col].mean()
+        std_val = df[col].std()
+        max_val = df[col].max()
+        min_val = df[col].min()
+        plt.text(
+            0.02, 
+            0.98, 
+            f'Mean: {mean_val:.2f}s\nStd: {std_val:.2f}s\nMax: {max_val:.2f}s\nMin: {min_val:.2f}s', 
+            transform = plt.gca().transAxes, 
+            verticalalignment = 'top',
+            bbox = dict(boxstyle = 'round', 
+                        facecolor = 'wheat', 
+                        alpha = 0.8
+                )
+        )
+        
+        plt.tight_layout()
+        plt.savefig(f"{save_dir}/{col}.png", dpi=300, bbox_inches='tight')
+        plt.show()
 
-# for log in os.listdir(LOGS_DIR):
-#     pass
-
-# plotting for a given single log file
-df = pd.read_csv(os.path.join(LOGS_DIR, "logs_conn1_ep391_iter199.csv"))
-print(df)
-
-# filter needed columns only
-df = df[NEEDED_COL_NAMES]
-print(df)
-
-# separate plots
-for col in df.columns:
-    plt.figure(figsize=(12, 6))
-    sns.lineplot(data=df, x=df.index, y=col)
-    plt.title(f"Waiting Time Metrics Over Time - {col}")
-    plt.xlabel("Time Step")
-    plt.ylabel("Waiting Time (seconds)")
+# ! Plot 2: Combined Time Series Plot
+def plot_time_series_combined(df: pd.DataFrame, save_dir: str = "Code/outputs/plots/ppo/waiting_time/combined") -> None:
+    """
+    Shows multiple metrics on the same plot for comparison.
+    Useful for understanding relationships between different waiting time metrics.
+    """
+    print("Creating combined time series plot...")
+    
+    # Create combined plot with subplots
+    fig, axes = plt.subplots(2, 2, figsize=(16, 10))
+    
+    # System-level metrics
+    axes[0,0].plot(df.index, df['system_total_waiting_time'], 
+                   linewidth=2.5, label='Total Waiting Time', color='red')
+    axes[0,0].plot(df.index, df['system_mean_waiting_time'], 
+                   linewidth=2.5, label='Mean Waiting Time', color='blue')
+    axes[0,0].set_title('System-Level Waiting Times', fontsize=14, fontweight='bold')
+    axes[0,0].set_xlabel('Time Step')
+    axes[0,0].set_ylabel('Waiting Time (s)')
+    axes[0,0].legend()
+    axes[0,0].grid(True, alpha=0.3)
+    
+    # Individual intersection metrics
+    intersection_cols = [col for col in df.columns if col.startswith(('1_', '2_', '5_', '6_'))]
+    for i, col in enumerate(intersection_cols):
+        axes[0,1].plot(df.index, df[col], linewidth=2, label=f'Intersection {col[0]}', alpha=0.8)
+    axes[0,1].set_title('Individual Intersection Waiting Times', fontsize=14, fontweight='bold')
+    axes[0,1].set_xlabel('Time Step')
+    axes[0,1].set_ylabel('Accumulated Waiting Time (s)')
+    axes[0,1].legend()
+    axes[0,1].grid(True, alpha=0.3)
+    
+    # Agents total accumulated
+    axes[1,0].plot(df.index, df['agents_total_accumulated_waiting_time'], 
+                   linewidth=2.5, label='Agents Total', color='green')
+    axes[1,0].set_title('Total Agent Accumulated Waiting Time', fontsize=14, fontweight='bold')
+    axes[1,0].set_xlabel('Time Step')
+    axes[1,0].set_ylabel('Waiting Time (s)')
+    axes[1,0].legend()
+    axes[1,0].grid(True, alpha=0.3)
+    
+    # Moving average of system mean waiting time
+    window_size = max(10, len(df) // 20)  # Adaptive window size
+    moving_avg = df['system_mean_waiting_time'].rolling(window=window_size).mean()
+    axes[1,1].plot(df.index, df['system_mean_waiting_time'], alpha=0.5, label='Raw Data')
+    axes[1,1].plot(df.index, moving_avg, linewidth=3, label=f'Moving Average (window={window_size})')
+    axes[1,1].set_title('Mean Waiting Time with Trend', fontsize=14, fontweight='bold')
+    axes[1,1].set_xlabel('Time Step')
+    axes[1,1].set_ylabel('Mean Waiting Time (s)')
+    axes[1,1].legend()
+    axes[1,1].grid(True, alpha=0.3)
+    
     plt.tight_layout()
+    plt.savefig(f"{save_dir}/combined_time_series.png", dpi=300, bbox_inches='tight')
     plt.show()
+
+# Load and process data
+algorithm = "ppo"  # You can make this configurable
+log_file = "logs_conn1_ep991_iter499.csv"
+df = pd.read_csv(os.path.join(LOGS_DIR, algorithm, log_file))
+
+# Filter needed columns only
+df = df[NEEDED_COL_NAMES]
+
+# Create enhanced plots
+plot_time_series_individual(df)
+plot_time_series_combined(df) 

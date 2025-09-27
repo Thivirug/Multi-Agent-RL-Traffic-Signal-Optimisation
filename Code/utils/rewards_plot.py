@@ -8,7 +8,7 @@ from Code.config import ENV_CONFIG
 import pettingzoo
 import argparse
 
-PLOTS_PARENT_PATH = os.path.abspath("Code/outputs/plots")
+PLOTS_PARENT_PATH = os.path.abspath("Code/outputs/plots/rewards")
 os.makedirs(PLOTS_PARENT_PATH, exist_ok=True)
 
 # ! --------------------------------------- HELPER Funcs -------------------------------------------
