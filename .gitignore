@@ -16,3 +16,6 @@ __pycache__/
 
 #outputs
 Code/outputs/
+
+#requirements
+requirements_jake.txt
