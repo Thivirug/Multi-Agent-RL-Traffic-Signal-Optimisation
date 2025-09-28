@@ -50,15 +50,6 @@ Multi-Agent-RL-Traffic-Signal-Optimisation/
 │
 ├── 📁 src/                               # Source code and dependencies
 │   └── 📁 sumo-rl/                       # SUMO-RL environment library
-│       ├── 📄 setup.py                   # Package setup
-│       ├── 📄 README.md                  # Library documentation
-│       ├── 📁 sumo_rl/                   # Core library code
-│       ├── 📁 experiments/               # Library examples
-│       ├── 📁 docs/                      # Documentation
-│       └── 📁 tests/                     # Unit tests
-│
-├── 📁 sumo/                              # SUMO traffic simulator
-├── 📁 sumo-rl/                           # SUMO-RL (alternative location)
 │
 ├── 📄 README.md                          # Project documentation
 ├── 📄 requirements.txt                   # Python dependencies (Linux)
