@@ -29,7 +29,14 @@ class AlgoConfigFactory:
     def _create_env(self, config: dict = None) -> pettingzoo.utils.conversions.aec_to_parallel_wrapper:
         """
             Create a parallel env in SUMO.
-            config = None was added to make this compatible with the lambda in registry
+
+            Args:
+                config (dict, optional): Environment configuration dictionary. Defaults to None.
+                    If None, uses self.env_config.
+            > NOTE:  config = None was added to make this compatible with the lambda in registry
+
+            Returns:
+                A parallel environment instance from sumo_rl.
         """
         return sumo_rl.parallel_env(**self.env_config if config is None else config)
     
@@ -69,7 +76,15 @@ class AlgoConfigFactory:
     def _CTDE_config(self, config: AlgorithmConfig) -> AlgorithmConfig:
         """
             Return the updated config with CTDE support. 
-            Raises exception "Check policy spec or env support for MARL".
+
+            Args: 
+                config (AlgorithmConfig): The base algorithm config to be updated.
+            
+            Returns:
+                The updated config with CTDE support.
+
+            Raises:
+                Exception: If the policy spec or environment does not support multi-agent.
         """
         try:
             return config.multi_agent(
@@ -83,6 +98,12 @@ class AlgoConfigFactory:
     def get_ppo_config(self, ppo_hparams: dict) -> AlgorithmConfig:
         """
             Create PPO configuration with CTDE support
+
+            Args:
+                ppo_hparams (dict): Hyperparameters for PPO training.
+
+            Returns:
+                The PPO configuration with CTDE support.
         """
 
         # create config
@@ -107,6 +128,12 @@ class AlgoConfigFactory:
     def get_dqn_config(self, dqn_hparams: dict) -> AlgorithmConfig:
         """
             Create DQN configuration with CTDE support.
+
+            Args:
+                dqn_hparams (dict): Hyperparameters for DQN training.
+
+            Returns:
+                The DQN configuration with CTDE support.
         """
 
         # create config
@@ -131,6 +158,12 @@ class AlgoConfigFactory:
     def get_sac_config(self, sac_hparams: dict) -> AlgorithmConfig:
         """
             Create SAC configuration with CTDE support.
+
+            Args:
+                sac_hparams (dict): Hyperparameters for SAC training.
+
+            Returns:
+                The SAC configuration with CTDE support.
         """
 
         # create config
