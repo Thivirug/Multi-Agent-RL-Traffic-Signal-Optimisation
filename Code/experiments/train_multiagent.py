@@ -20,6 +20,9 @@ import json
 def rename_logs(iter_n: int) -> None:
     """
         Rename the .csv log files to include iteration number
+
+        Args:
+            iter_n (int): Current iteration number.
     """
     logs_dir = os.path.abspath("Code/outputs/logs")
 
