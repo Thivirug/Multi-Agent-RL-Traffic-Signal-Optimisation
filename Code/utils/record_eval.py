@@ -159,6 +159,16 @@ def _parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 20, num_episodes: int = 5) -> None:
+    """
+        Run evaluation of a trained multi-agent RL algorithm checkpoint and record videos.
+
+        Args:
+            checkpoint_dir (str): Path to the checkpoint directory.
+            algo_name (str): Algorithm name (e.g., 'ppo', 'dqn', 'sac').
+            is_greedy (bool): Whether to use greedy action selection.
+            max_steps (int): Max steps per episode (default: 20).
+            num_episodes (int): Number of episodes to run (default: 5).
+    """
     # get eval env
     env = _get_env(max_steps, ENV_CONFIG)
 
