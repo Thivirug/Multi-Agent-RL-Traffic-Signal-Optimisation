@@ -246,21 +246,21 @@ def plot_time_series_combined_with_uncertainty(
     
     # 1) System-level metrics
     axes[0,0].plot(mean_df.index, mean_df['system_total_waiting_time'], 
-                   linewidth=3, label='Total Waiting Time', color='red')
+                   linewidth=1, label='Total Waiting Time', color='red')
     axes[0,0].fill_between(
         mean_df.index,
         mean_df['system_total_waiting_time'] - std_df['system_total_waiting_time'],
         mean_df['system_total_waiting_time'] + std_df['system_total_waiting_time'],
-        alpha=0.3, color='red'
+        alpha=0.8, color='lightcoral'
     )
     
     axes[0,0].plot(mean_df.index, mean_df['system_mean_waiting_time'], 
-                   linewidth=3, label='Mean Waiting Time', color='blue')
+                   linewidth=1, label='Mean Waiting Time', color='blue')
     axes[0,0].fill_between(
         mean_df.index,
         mean_df['system_mean_waiting_time'] - std_df['system_mean_waiting_time'],
         mean_df['system_mean_waiting_time'] + std_df['system_mean_waiting_time'],
-        alpha=0.3, color='blue'
+        alpha=0.8, color='lightblue'
     )
     
     axes[0,0].set_title('System-Level Waiting Times', fontsize=14, fontweight='bold')
@@ -271,17 +271,17 @@ def plot_time_series_combined_with_uncertainty(
     
     # 2) Individual intersection metrics
     intersection_cols = [col for col in mean_df.columns if col.startswith(('1_', '2_', '5_', '6_'))]
-    colors = ['green', 'orange', 'purple', 'brown']
+    colors = ['green', 'orange', 'purple', 'gray']
     
     for i, col in enumerate(intersection_cols):
-        color = colors[i % len(colors)]
-        axes[0,1].plot(mean_df.index, mean_df[col], linewidth=2.5, 
+        color = colors[i]
+        axes[0,1].plot(mean_df.index, mean_df[col], linewidth=1, 
                       label=f'Intersection {col[0]}', color=color)
         axes[0,1].fill_between(
             mean_df.index,
             mean_df[col] - std_df[col],
             mean_df[col] + std_df[col],
-            alpha=0.2, color=color
+            alpha=0.5, color=color
         )
     
     axes[0,1].set_title('Individual Intersection Waiting Times', fontsize=14, fontweight='bold')
@@ -333,20 +333,20 @@ def plot_episode_comparison(
     aggregated_data: Dict[str, pd.DataFrame], 
     algo_name: str, 
     iteration: int, 
-    metric: str = 'system_mean_waiting_time',
+    metric: str,
     max_episodes_to_show: int = 10,
     save_dir: str = "Code/outputs/plots"
 ) -> None:
     """
-    Plot individual episodes for comparison along with the mean.
-    
-    Args:
-        aggregated_data (Dict): Dictionary containing aggregated episode data
-        algo_name (str): Algorithm name
-        iteration (int): Iteration number
-        metric (str): Which metric to plot
-        max_episodes_to_show (int): Maximum number of individual episodes to show
-        save_dir (str): Directory to save the plots
+        Plot individual episodes for comparison along with the mean.
+        
+        Args:
+            aggregated_data (Dict): Dictionary containing aggregated episode data
+            algo_name (str): Algorithm name
+            iteration (int): Iteration number
+            metric (str): Which metric to plot
+            max_episodes_to_show (int): Maximum number of individual episodes to show
+            save_dir (str): Directory to save the plots
     """
     print(f"Creating episode comparison plot for {metric}...")
     
@@ -356,7 +356,7 @@ def plot_episode_comparison(
     
     plt.figure(figsize=(16, 8))
     
-    # Plot a subset of individual episodes
+    # Plot a subset/ complete set of individual episodes
     episodes_to_show = min(max_episodes_to_show, n_episodes)
     step = max(1, n_episodes // episodes_to_show)
     
@@ -368,7 +368,7 @@ def plot_episode_comparison(
     
     # Plot mean with thicker line
     plt.plot(mean_df.index, mean_df[metric], 
-            linewidth=4, color='darkblue', label=f'Mean ({n_episodes} episodes)')
+            linewidth=3, color='darkblue', label=f'Mean ({n_episodes} episodes)')
     
     plt.title(f"Episode Comparison: {metric.replace('_', ' ').title()}\n"
              f"Iteration {iteration} - Showing {episodes_to_show}/{n_episodes} episodes", 
@@ -388,7 +388,7 @@ def plot_episode_comparison(
 
 def _argparse() -> argparse.Namespace:
     """
-    Parse given args from the terminal and return them to the program.
+        Parse given args from the terminal and return them to the program.
     """
     parser = argparse.ArgumentParser(description="Plot waiting time metrics from multiple episodes of a single iteration")
     parser.add_argument("algo", help="Algorithm used for evaluation (ppo/dqn/sac)")
