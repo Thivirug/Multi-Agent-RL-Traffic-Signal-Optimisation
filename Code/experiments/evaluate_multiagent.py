@@ -5,17 +5,28 @@ import os
 import numpy as np
 from Code.config import ENV_CONFIG
 from algorithms import AlgoConfigFactory
+
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
+from ray.rllib.algorithms.ppo.torch.default_ppo_torch_rl_module import DefaultPPOTorchRLModule
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.dqn import DQN
 from ray.rllib.algorithms.sac import SAC
+
 import torch
 from tqdm import trange
 import argparse
 
 def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes: int = 5) -> None:
+    """
+        Evaluate a trained multi-agent RL algorithm in the SUMO environment and view results.
 
+        Args:
+            checkpoint_dir (str): Path to the directory containing the trained model checkpoint.
+            algo_name (str): The name of the algorithm used for training ('ppo', 'dqn', or 'sac').
+            max_steps (int, optional): Maximum steps per episode. Defaults to 20.
+            num_episodes (int, optional): Number of episodes to run for evaluation. Defaults to 5.
+    """
     # create factory and register environment with local config override
     local_config = ENV_CONFIG.copy()
     local_config.update({
@@ -49,9 +60,16 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
     module = algo.get_module("shared_policy")  
 
     # inner helper function
-    def compute_actions(module, obs: dict) -> dict:
+    def compute_actions(module: DefaultPPOTorchRLModule, obs: dict) -> dict:
         """
             Get actions executed by each agent and create a dict to pass into env.step().
+
+            Args:
+                module (DefaultPPOTorchRLModule): The trained policy module.
+                obs (dict): Current observations from all agents.
+
+            Returns:
+                Actions for each agent.
         """
         obs_array = np.array(list(obs.values()), dtype=np.float32)   # ensure ndarray
         obs_tensor = torch.from_numpy(obs_array).unsqueeze(0)  # add batch dim
@@ -66,7 +84,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         action_dist = action_dist_class.from_logits(
             out["action_dist_inputs"]
         )
-        actions = action_dist.sample()[0].numpy()
+        actions = action_dist.sample()[0].numpy() # ! using sampling instead of deterministic evaluation
 
         # create the actions dictionary
         for i, agent_id in enumerate(env.possible_agents):
