@@ -36,6 +36,7 @@ Multi-Agent-RL-Traffic-Signal-Optimisation/
 │   │   ├── 📁 plots/                     # Generated plots and visualizations
 │   │   │   └── 📁 {algoname}/            # {algoname} algorithm plots
 │   │   │       ├── 📁 rewards/           # Reward plots
+│   │   │       └── 📁 waiting_time_singleLog/ # Single log WT plots
 │   │   │       └── 📁 waiting_time_multiEpisode/ # Multi-episode WT plots
 │   │   │
 │   │   └── 📁 recordings/                # Video recordings
