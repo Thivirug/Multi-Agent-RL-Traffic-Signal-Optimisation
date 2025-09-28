@@ -22,24 +22,24 @@ Multi-Agent-RL-Traffic-Signal-Optimisation/
 │   │   └── 📄 test_mac.py                # macOS specific tests
 │   │
 │   ├── 📁 outputs/                       # Training outputs and results
-│   │   ├── 📄 results_ppo.json           # PPO algorithm results
+│   │   ├── 📄 results_{algoname}.json    # {algoname} algorithm results
 │   │   ├── 📄 todo.txt                   # Output tasks
 │   │   │
 │   │   ├── 📁 checkpoints/               # Model checkpoints
-│   │   │   └── 📁 ppo/                   # PPO model checkpoints
+│   │   │   └── 📁 {algoname}/            # {algoname} model checkpoints
 │   │   │       ├── 📁 10/ ... 📁 500/    # Checkpoint iterations
 │   │   │
 │   │   ├── 📁 logs/                      # Training logs
-│   │   │   └── 📁 ppo/                   # PPO training logs
+│   │   │   └── 📁 {algoname}/            # {algoname} training logs
 │   │   │       └── 📄 logs_*.csv         # CSV log files
 │   │   │
 │   │   ├── 📁 plots/                     # Generated plots and visualizations
-│   │   │   └── 📁 ppo/                   # PPO algorithm plots
+│   │   │   └── 📁 {algoname}/            # {algoname} algorithm plots
 │   │   │       ├── 📁 rewards/           # Reward plots
 │   │   │       └── 📁 waiting_time_multiEpisode/ # Multi-episode WT plots
 │   │   │
 │   │   └── 📁 recordings/                # Video recordings
-│   │       └── 📁 ppo/                   # PPO training recordings
+│   │       └── 📁 {algoname}/            # {algoname} training recordings
 │   │
 │   └── 📁 utils/                         # Utility scripts
 │       ├── 📄 record_eval.py             # Recording evaluation
