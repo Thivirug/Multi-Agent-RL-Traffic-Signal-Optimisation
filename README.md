@@ -62,22 +62,22 @@ Multi-Agent-RL-Traffic-Signal-Optimisation/
 
 ## Directory Descriptions
 
-### 🔧 **Code/**
+### **Code/**
 Main application directory containing all custom implementation code, experiments, and utilities.
 
-### 🧪 **Code/experiments/**
+### **Code/experiments/**
 Contains the core machine learning algorithms and training/evaluation scripts for multi-agent reinforcement learning.
 
-### 🛠️ **Code/initial_testing/**
+### **Code/initial_testing/**
 Testing scripts to verify environment setup, GPU functionality, and installation correctness across different platforms.
 
-### 📊 **Code/outputs/**
+### **Code/outputs/**
 All training outputs including model checkpoints, logs, visualizations, and recorded sessions organized by algorithm type.
 
-### 🔨 **Code/utils/**
+### **Code/utils/**
 Utility scripts for data processing, visualization, and analysis of training results.
 
-### 📦 **src/**
+### **src/**
 External dependencies and libraries, primarily the SUMO-RL environment for traffic simulation.
 
 ## Key Files
