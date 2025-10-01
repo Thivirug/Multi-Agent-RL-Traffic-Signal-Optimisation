@@ -1,0 +1,84 @@
+==================================================================================
+TERMINAL COMMANDS TO RUN RECORDING & PLOTTING SCRIPTS
+==================================================================================
+
+NOTE: Always cd to parent directory: Multi-Agent-RL-Traffic-Signal-Optimisation
+
+
+1) record_eval.py 
+   Purpose: Evaluate trained multi-agent RL algorithm checkpoint and record videos
+   
+   Command:
+   python Code/utils/record_eval.py <algo> <checkpoint_path> <greedy> [--max-steps <steps>] [--episodes <num>]
+   
+   Arguments:
+   - algo         : Algorithm name (ppo/dqn/sac)
+   - checkpoint   : Path to checkpoint directory (e.g., Code/outputs/checkpoints/ppo/500)
+   - greedy       : Use greedy action selection (true/false/yes/no/1/0)
+   - --max-steps  : Optional. Max steps per episode (default: 20)
+   - --episodes   : Optional. Number of episodes to run (default: 5)
+   
+   Examples:
+   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 true
+   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 false --max-steps 30 --episodes 10
+   python Code/utils/record_eval.py dqn Code/outputs/checkpoints/dqn/400 true --episodes 3
+
+----------------------------------------------------------------------------------
+
+2) rewards_plot.py
+   Purpose: Plot mean episode rewards from training results JSON file
+   
+   Command:
+   python Code/utils/rewards_plot.py <algo>
+   
+   Arguments:
+   - algo : Algorithm name (ppo/dqn/sac)
+   
+   Examples:
+   python Code/utils/rewards_plot.py ppo
+   python Code/utils/rewards_plot.py dqn
+   python Code/utils/rewards_plot.py sac
+
+----------------------------------------------------------------------------------
+
+3) WT_plot_single_log.py
+   Purpose: Plot waiting time metrics from a single episode log CSV file
+   
+   Command:
+   python Code/utils/WT_plot_single_log.py <algo> <log_file>
+   
+   Arguments:
+   - algo     : Algorithm name (ppo/dqn/sac)
+   - log_file : Log file name (e.g., logs_conn0_ep1_iter480.csv)
+   
+   Examples:
+   python Code/utils/WT_plot_single_log.py ppo logs_conn0_ep1_iter480.csv
+   python Code/utils/WT_plot_single_log.py dqn logs_conn0_ep2_iter300.csv
+
+----------------------------------------------------------------------------------
+
+4) WT_plot_multi_episode.py
+   Purpose: Plot waiting time metrics aggregated across multiple episodes from a single iteration
+   
+   Command:
+   python Code/utils/WT_plot_multi_episode.py <algo> <iteration> [--max-episodes-comparison <num>]
+   
+   Arguments:
+   - algo                      : Algorithm name (ppo/dqn/sac)
+   - iteration                 : Iteration number to process (e.g., 480)
+   - --max-episodes-comparison : Optional. Max episodes to show in comparison plot (default: 10)
+   
+   Examples:
+   python Code/utils/WT_plot_multi_episode.py ppo 480
+   python Code/utils/WT_plot_multi_episode.py ppo 500 --max-episodes-comparison 15
+   python Code/utils/WT_plot_multi_episode.py dqn 400
+
+==================================================================================
+OUTPUT LOCATIONS:
+==================================================================================
+- Videos:             Code/outputs/recordings/<algo>/
+- Reward plots:       Code/outputs/plots/<algo>/rewards/
+- Waiting time plots: Code/outputs/plots/<algo>/waiting_time_singleLog/
+                      Code/outputs/plots/<algo>/waiting_time_multiEpisode/
+
+==================================================================================
