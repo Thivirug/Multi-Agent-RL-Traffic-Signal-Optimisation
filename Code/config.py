@@ -40,7 +40,7 @@ ENV_CONFIG = {
 # ! ------- Algorithm hyperparams -------
 
 # PPO Hyperparameters 
-PPO_hparams = { # ! might need to add rollout fragment length in env_runners
+PPO_hparams = { 
     'lr': [
         [0, 5e-4],         # <- initial learning rate at timestep 0
         [100000, 1e-4],    # <- learning rate at 100k timesteps
@@ -65,35 +65,36 @@ PPO_hparams = { # ! might need to add rollout fragment length in env_runners
 
 # DQN Hyperparameters  
 DQN_hparams = {
-    "train_batch_size_per_learner": 64,        # Batch size for training
-    "lr": 1e-4,                    # Learning rate
-    "gamma": 0.99,                 # Discount factor
-    "target_network_update_freq": 1000,  # Target network update frequency
-    "replay_buffer_config": {
-        "type": "MultiAgentReplayBuffer",
-        "capacity": 100000,        # Replay buffer size
-    },
-    'epsilon' : [         
-        [0, 0.5],          # <- initial value at timestep 0
-        [100000, 0.06],     # <- value at 100k timesteps
+    # Training configuration
+    "train_batch_size_per_learner": 64,  # Batch size per learner (New API)
+    'lr': [
+        [0, 5e-4],         # <- initial learning rate at timestep 0
+        [100000, 1e-4],    # <- learning rate at 100k timesteps
+        [300000, 5e-5],    # <- learning rate at 300k timesteps
     ], 
-    "double_q": True,              # Use double Q-learning
-    "dueling": True,               # Use dueling network architecture
+    
+    # Core DQN parameters
+    "gamma": 0.99,                       # Discount factor
+    "target_network_update_freq": 1000,  # Target network update frequency (in env steps)
+    
+    # Network architecture
+    "double_q": True,                    # Use double Q-learning
+    "dueling": True,                     # Use dueling network architecture
+    
+    # Training behavior
+    "num_steps_sampled_before_learning_starts": 5000,  # Warmup steps before training
+ 
 }
 
 # SAC Hyperparameters
 SAC_hparams = {
     "twin_q": True,                # Use two Q-networks for the critics, to mitigate overestimation bias
-    "gamma": 0.99,                 #discount factor
+    "gamma": 0.99,                 # discount factor
     "tau" : 0.005,                 # Soft update coefficeint
     "train_batch_size_per_learner" : 256, 
-    "replay_buffer_config" : {
-        "type" : "MultiAgentPrioritizedReplayBuffer",
-        "capacity" : 100000        #size of replay buffer
-    },
     "num_steps_sampled_before_learning_starts": 5000, # number of steps to collect before training starts
     "target_entropy": "auto",      # automatically tune the entropy coefficeint (alpha)
-    "target_network_update_freq": 1, #update target network every 'train_batch_size' steps. 1 is standards for soft updates
+    "target_network_update_freq": 1, # update target network every 'train_batch_size' steps. 1 is standards for soft updates
     "optimization_config": {
         "actor_learning_rate": 3e-4,
         "critic_learning_rate": 3e-4,

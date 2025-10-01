@@ -141,9 +141,9 @@ class AlgoConfigFactory:
             DQNConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .api_stack(enable_rl_module_and_learner=False, enable_env_runner_and_connector_v2=False)
-            .env_runners(num_env_runners=8, num_gpus_per_env_runner=0.125, rollout_fragment_length="auto") # ! CHANGE THESE FOR UR PC REQS
-            .learners(num_learners=3, num_cpus_per_learner=6, num_gpus_per_learner=0.33) # ! CHANGE THESE FOR UR PC REQS
+            .api_stack(enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True)
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1, rollout_fragment_length="auto") # ! CHANGE THESE FOR UR PC REQS
+            .learners(num_learners=3, num_cpus_per_learner=6) # ! CHANGE THESE FOR UR PC REQS
             .training(**dqn_hparams)
             .evaluation(
                 evaluation_interval=10,
@@ -172,9 +172,9 @@ class AlgoConfigFactory:
             SACConfig()
             .environment(env="sumo_multi_agent", env_config=self.env_config)
             .framework('torch')
-            .api_stack(enable_rl_module_and_learner=False, enable_env_runner_and_connector_v2=False)
-            .env_runners(num_env_runners=6, num_gpus_per_env_runner=0.15, rollout_fragment_length="auto") # ! CHANGE THESE FOR UR PC REQS
-            .learners(num_learners=2, num_cpus_per_learner=10, num_gpus_per_learner=0.4) # ! CHANGE THESE FOR UR PC REQS
+            .api_stack(enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True)
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1, rollout_fragment_length="auto") # ! CHANGE THESE FOR UR PC REQS
+            .learners(num_learners=3, num_cpus_per_learner=6) # ! CHANGE THESE FOR UR PC REQS
             .training(**sac_hparams)
             .evaluation(
                 evaluation_interval=10,
