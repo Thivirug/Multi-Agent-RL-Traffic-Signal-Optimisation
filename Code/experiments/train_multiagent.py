@@ -117,12 +117,12 @@ def main() -> None:
             }
             results.append(result)
 
-            # write results to json file after each checkpoint
-            with open(json_path, "w") as f:
-                json.dump(results, f, indent=2)
+            # # write results to json file after each checkpoint
+            # with open(json_path, "w") as f:
+            #     json.dump(results, f, indent=2)
 
-    # final dump to json (in case no checkpoints were saved)
-    print(f"\n\t Final dump to {json_path}...\n")
+    # dump to json 
+    print(f"\n\t Dumping to {json_path}...\n")
     with open(json_path, "w") as f:
         json.dump(results, f, indent=2)
 
