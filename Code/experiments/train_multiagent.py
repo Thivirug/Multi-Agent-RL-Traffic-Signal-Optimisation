@@ -17,14 +17,15 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 
 import json
 
-def rename_logs(iter_n: int) -> None:
+def rename_logs(iter_n: int, algo_name: str) -> None:
     """
         Rename the .csv log files to include iteration number
 
         Args:
             iter_n (int): Current iteration number.
+            algo_name (str): Name of the algorithm used for training.
     """
-    logs_dir = os.path.abspath("Code/outputs/logs")
+    logs_dir = os.path.abspath(f"Code/outputs/logs/{algo_name}")
 
     # define the pattern of strings of the filename
     pattern = re.compile(r"(logs_conn\d+_ep\d+)\.csv")
@@ -88,7 +89,7 @@ def main() -> None:
         algo.train()
 
         # rename logs
-        rename_logs(i)
+        rename_logs(i, algo_name)
 
         # evaluate and checkpoint
         if (i + 1) % checkpoint_freq == 0:

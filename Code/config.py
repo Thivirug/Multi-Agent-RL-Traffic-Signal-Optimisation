@@ -8,8 +8,8 @@ ARG_DICT = {
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
 
-    "dqn" : { # ! npc jake change these to wt u need !!
-        "n_iterations": 400,   
+    "dqn" : { 
+        "n_iterations": 500,   
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
 
@@ -66,7 +66,7 @@ PPO_hparams = {
 # DQN Hyperparameters  
 DQN_hparams = {
     # Training configuration
-    "train_batch_size_per_learner": 64,  # Batch size per learner (New API)
+    "train_batch_size_per_learner": 256,  # Batch size per learner (New API)
     'lr': [
         [0, 5e-4],         # <- initial learning rate at timestep 0
         [100000, 1e-4],    # <- learning rate at 100k timesteps
@@ -76,13 +76,21 @@ DQN_hparams = {
     # Core DQN parameters
     "gamma": 0.99,                       # Discount factor
     "target_network_update_freq": 1000,  # Target network update frequency (in env steps)
+    "n_step": 1,                         # Use 1-step returns (fixes scipy buffer issue)
     
     # Network architecture
     "double_q": True,                    # Use double Q-learning
     "dueling": True,                     # Use dueling network architecture
     
-    # Training behavior
-    "num_steps_sampled_before_learning_starts": 5000,  # Warmup steps before training
+    # Replay buffer settings (for new API stack)
+    "replay_buffer_config": {
+        "type": "MultiAgentPrioritizedEpisodeReplayBuffer",
+        "capacity": 500000,              # Large enough for ~50 episodes (4 agents × 2400 steps each)
+        "alpha": 0.6,                    # Prioritization exponent
+        "beta": 0.4,                     # Importance sampling weight
+    },
+    
+    "num_steps_sampled_before_learning_starts": 5000,  # ~2 episodes before training starts
  
 }
 
