@@ -5,7 +5,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.dqn import DQNConfig
 from ray.rllib.algorithms.sac import SACConfig
-
+from ray.rllib.algorithms.appo import APPOConfig
 from ray.rllib.policy.policy import PolicySpec
 import sumo_rl # type: ignore
 
@@ -186,5 +186,34 @@ class AlgoConfigFactory:
         # creating CTDE shared policy 
         return self._CTDE_config(config)
     
+# ! ================== APPO ==================
+    def get_appo_config(self, appo_hparams: dict) -> AlgorithmConfig:
+        """
+            Create APPO configuration with CTDE support.
 
+            Args:
+                appo_hparams (dict): Hyperparameters for SAC training.
+
+            Returns:
+                The appo configuration with CTDE support.
+        """
+
+        # create config
+        config = (
+            APPOConfig()
+            .environment(env="sumo_multi_agent", env_config=self.env_config)
+            .framework('torch')
+            .api_stack(enable_rl_module_and_learner=False, enable_env_runner_and_connector_v2=False)
+            .env_runners(num_env_runners=1, num_gpus_per_env_runner=1, rollout_fragment_length=250) # ! CHANGE THESE FOR UR PC REQS
+            .learners(num_learners=1, num_cpus_per_learner=4) # ! CHANGE THESE FOR UR PC REQS
+            .training(**appo_hparams)
+            .evaluation(
+                evaluation_interval=10,
+                evaluation_duration=10,
+                evaluation_config={"env_config": self.env_config}
+            )
+        )
+        
+        # creating CTDE shared policy 
+        return self._CTDE_config(config)
             

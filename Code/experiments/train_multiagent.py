@@ -2,7 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, ARG_DICT
+from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, APPO_hparams, ARG_DICT
 from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
@@ -43,7 +43,7 @@ def rename_logs(iter_n: int, algo_name: str) -> None:
 def main() -> None:
     # get algo config 
     print("\n ====== TRAINING START ======\n")
-    print("Algorithm Options: ppo, dqn, sac")
+    print("Algorithm Options: ppo, dqn, sac, appo")
     algo_name = input("Training algorithm: --> ")
 
     # update logs path with algo name
@@ -67,9 +67,11 @@ def main() -> None:
             config = factory.get_dqn_config(DQN_hparams)
         case "sac":
             config = factory.get_sac_config(SAC_hparams)
+        case "appo":
+            config = factory.get_appo_config(APPO_hparams)
         case _:
-            raise ValueError("Algorithm can be ppo, dqn, or sac only !")
-
+            raise ValueError("Algorithm can be ppo, dqn, appo, or sac only !")
+        
     # use algorithm specific args
     n_iterations = ARG_DICT[algo_name]['n_iterations']
     checkpoint_freq = ARG_DICT[algo_name]['chkpoint_eval_freq']
