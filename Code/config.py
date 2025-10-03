@@ -83,11 +83,10 @@ DQN_hparams = {
     "dueling": True,                     # Use dueling network architecture
     
     # Replay buffer settings (for new API stack)
+    # Using non-prioritized buffer for stability in long training runs
     "replay_buffer_config": {
-        "type": "MultiAgentPrioritizedEpisodeReplayBuffer",
+        "type": "MultiAgentEpisodeReplayBuffer",  # Non-prioritized - more stable
         "capacity": 500000,              # Large enough for ~50 episodes (4 agents × 2400 steps each)
-        "alpha": 0.6,                    # Prioritization exponent
-        "beta": 0.4,                     # Importance sampling weight
     },
     
     "num_steps_sampled_before_learning_starts": 5000,  # ~2 episodes before training starts
