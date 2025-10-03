@@ -9,7 +9,7 @@ ARG_DICT = {
     },
 
     "dqn" : { 
-        "n_iterations": 500,   
+        "n_iterations": 300,   
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
 
@@ -17,6 +17,7 @@ ARG_DICT = {
         "n_iterations": 400,   
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
+
     "appo": {
         "n_iterations": 200,   
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq

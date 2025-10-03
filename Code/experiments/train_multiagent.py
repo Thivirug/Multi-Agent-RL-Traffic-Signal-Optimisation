@@ -120,10 +120,6 @@ def main() -> None:
             }
             results.append(result)
 
-            # # write results to json file after each checkpoint
-            # with open(json_path, "w") as f:
-            #     json.dump(results, f, indent=2)
-
     # dump to json 
     print(f"\n\t Dumping to {json_path}...\n")
     with open(json_path, "w") as f:
