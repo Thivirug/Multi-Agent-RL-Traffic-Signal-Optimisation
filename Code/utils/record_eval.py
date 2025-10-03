@@ -12,7 +12,7 @@ from Code.config import ENV_CONFIG
 from Code.experiments.algorithms import AlgoConfigFactory
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
-from ray.rllib.algorithms.ppo.torch.default_ppo_torch_rl_module import DefaultPPOTorchRLModule
+from ray.rllib.core.rl_module import MultiRLModule
 from ray.rllib.core.distribution.torch.torch_distribution import TorchCategorical
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.dqn import DQN
@@ -53,15 +53,14 @@ def _get_env(max_steps: int, env_config: dict) -> pettingzoo.utils.conversions.a
     # create env for evaluation
     return factory._create_env(local_config)
 
-def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper, is_greedy: bool) -> dict:
+def _compute_actions(module: MultiRLModule, obs: dict, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> dict:
         """
             Get actions executed by each agent and create a dict to pass into env.step().
 
             Args:
-                module (DefaultPPOTorchRLModule): The trained policy module.
+                module (MultiRLModule): The trained policy module.
                 obs (dict): Current observations from all agents.
                 env (pettingzoo.utils.conversions.aec_to_parallel_wrapper): The environment instance.
-                is_greedy (bool): Whether to use greedy action selection or sample.
 
             Returns:
                 Actions for each agent.
@@ -76,16 +75,21 @@ def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo
 
         # ! actions selection 
 
-        # retrieve the class for the action distribution used during inference
-        action_dist_class: abc.ABCMeta = module.get_inference_action_dist_cls()
+        # ! For PPO - Outputs logits for each possible action for each agent
+        if out.get("action_dist_inputs") is not None:
+            # retrieve the class for the action distribution used during inference
+            action_dist_class: abc.ABCMeta = module.get_inference_action_dist_cls()
 
-        # get probability distribution over actions
-        action_dist: TorchCategorical = action_dist_class.from_logits(out["action_dist_inputs"])
+            # get probability distribution over actions
+            action_dist: TorchCategorical = action_dist_class.from_logits(out["action_dist_inputs"])
 
-        if is_greedy:
+            # get the actions - greedy (deterministic) 
             actions: np.ndarray = action_dist.to_deterministic().sample()[0].numpy()
-        else:
-            actions: np.ndarray = action_dist.sample()[0].numpy()
+
+        # ! For DQN - Outputs the action indices directly for each agent
+        if out.get("actions") is not None:
+            action_indices: torch.Tensor = out["actions"] # shape (1, num_agents)
+            actions = action_indices[0].numpy()  # shape (num_agents,)
 
         # Create the actions dictionary
         for i, agent_id in enumerate(env.possible_agents):
@@ -93,7 +97,7 @@ def _compute_actions(module: DefaultPPOTorchRLModule, obs: dict, env: pettingzoo
 
         return actions_dict
 
-def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int, max_steps: int, is_greedy: bool, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
+def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int, max_steps: int, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
     """
         Initialise video recording setup for given episode.
 
@@ -102,7 +106,6 @@ def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int
             algo_name (str): Algorithm name for filename.
             ep (int): Current episode number.
             max_steps (int): Max steps per episode.
-            is_greedy (bool): Whether greedy action selection is used.
             env (pettingzoo.utils.conversions.aec_to_parallel_wrapper): The environment instance.
 
         Returns:
@@ -111,7 +114,7 @@ def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int
     # Initialise video writer with OpenCV
     video_filename = os.path.join(
         video_dir, 
-        f'algorithm_{algo_name}_episode#_{ep+1}_iteration#_{_get_chkpoint_iteration(checkpoint_dir)}_max_steps_{max_steps}_is_greedy_{is_greedy}.mp4'
+        f'algorithm_{algo_name}_episode#_{ep+1}_iteration#_{_get_chkpoint_iteration(checkpoint_dir)}_max_steps_{max_steps}.mp4'
     )
 
     frame = env.render()  # Get initial frame to determine dims
@@ -151,21 +154,19 @@ def _parse_args() -> argparse.Namespace:
     # mandatory args
     p.add_argument("algo", help="Algorithm used for evaluation")
     p.add_argument("checkpoint", help="Path to checkpoint (directory)")
-    p.add_argument("greedy", help="Use greedy action selection")
 
     # optional args
     p.add_argument("--max-steps", type=int, default=20, help="Max steps per episode (default: 20)")
     p.add_argument("--episodes", type=int, default=5, help="Number of episodes to run (default: 5)")
     return p.parse_args()
 
-def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 20, num_episodes: int = 5) -> None:
+def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes: int = 5) -> None:
     """
         Run evaluation of a trained multi-agent RL algorithm checkpoint and record videos.
 
         Args:
             checkpoint_dir (str): Path to the checkpoint directory.
             algo_name (str): Algorithm name (e.g., 'ppo', 'dqn', 'sac').
-            is_greedy (bool): Whether to use greedy action selection.
             max_steps (int): Max steps per episode (default: 20).
             num_episodes (int): Number of episodes to run (default: 5).
     """
@@ -211,12 +212,12 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
         rewards = {agent: 0 for agent in env.possible_agents}
         print(f"Starting episode {ep+1}... ")
 
-        out, initial_frame = _init_video_rec(video_dir, checkpoint_dir, algo_name, ep, max_steps, is_greedy, env)
+        out, initial_frame = _init_video_rec(video_dir, checkpoint_dir, algo_name, ep, max_steps, env)
         out.write(cv2.cvtColor(initial_frame, cv2.COLOR_RGB2BGR))  # Write initial frame
 
         while True:
             # get the actions for all agents
-            actions_dict = _compute_actions(module, obs, env, is_greedy)
+            actions_dict = _compute_actions(module, obs, env)
 
             obs, rew, terminated, truncated, _ = env.step(actions_dict)
 
@@ -260,5 +261,4 @@ def main(checkpoint_dir: str, algo_name: str, is_greedy: bool, max_steps: int = 
 if __name__ == "__main__":
     args = _parse_args()
     checkpoint_path = os.path.abspath(args.checkpoint)
-    is_greedy = args.greedy.lower() in ['true', '1', 'yes'] # convert to bool
-    main(checkpoint_path, args.algo, is_greedy, args.max_steps, args.episodes)
+    main(checkpoint_path, args.algo, args.max_steps, args.episodes)

@@ -8,7 +8,7 @@ from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
-from ray.rllib.algorithms.ppo.torch.default_ppo_torch_rl_module import DefaultPPOTorchRLModule
+from ray.rllib.core.rl_module import MultiRLModule
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.dqn import DQN
 from ray.rllib.algorithms.sac import SAC
@@ -63,13 +63,15 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
     # Get the trained module (policy) by ID
     module = algo.get_module("shared_policy")  
 
+    print(type(module))
+
     # inner helper function
-    def compute_actions(module: DefaultPPOTorchRLModule, obs: dict) -> dict:
+    def compute_actions(module: MultiRLModule, obs: dict) -> dict:
         """
             Get actions executed by each agent and create a dict to pass into env.step().
 
             Args:
-                module (DefaultPPOTorchRLModule): The trained policy module.
+                module (MultiRLModule): The trained policy module.
                 obs (dict): Current observations from all agents.
 
             Returns:
@@ -83,12 +85,19 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         # Forward pass through the policy (greedy in the sense it uses the learned policy)
         out = module.forward_inference({"obs": obs_tensor})
 
-        # sample the best action
-        action_dist_class = module.get_inference_action_dist_cls()
-        action_dist = action_dist_class.from_logits(
-            out["action_dist_inputs"]
-        )
-        actions = action_dist.sample()[0].numpy() # ! using sampling instead of deterministic evaluation
+        # ! For PPO - Outputs logits for each possible action for each agent
+        if out.get("action_dist_inputs") is not None:
+            # sample the best action
+            action_dist_class = module.get_inference_action_dist_cls()
+            action_dist = action_dist_class.from_logits(
+                out["action_dist_inputs"]
+            )
+            actions = action_dist.sample()[0].numpy() # ! using sampling instead of deterministic evaluation
+
+        # ! For DQN - Outputs the action indices directly for each agent
+        if out.get("actions") is not None:
+            action_indices = out["actions"] # shape (1, num_agents)
+            actions = action_indices[0].numpy()  # shape (num_agents,)
 
         # create the actions dictionary
         for i, agent_id in enumerate(env.possible_agents):
