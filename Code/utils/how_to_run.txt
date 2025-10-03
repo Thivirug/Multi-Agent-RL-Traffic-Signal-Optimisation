@@ -14,14 +14,13 @@ NOTE: Always cd to parent directory: Multi-Agent-RL-Traffic-Signal-Optimisation
    Arguments:
    - algo         : Algorithm name (ppo/dqn/sac)
    - checkpoint   : Path to checkpoint directory (e.g., Code/outputs/checkpoints/ppo/500)
-   - greedy       : Use greedy action selection (true/false/yes/no/1/0)
    - --max-steps  : Optional. Max steps per episode (default: 20)
    - --episodes   : Optional. Number of episodes to run (default: 5)
    
    Examples:
-   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 true
-   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 false --max-steps 30 --episodes 10
-   python Code/utils/record_eval.py dqn Code/outputs/checkpoints/dqn/400 true --episodes 3
+   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 
+   python Code/utils/record_eval.py ppo Code/outputs/checkpoints/ppo/500 --max-steps 30 --episodes 10
+   python Code/utils/record_eval.py dqn Code/outputs/checkpoints/dqn/400 --episodes 3
 
 ----------------------------------------------------------------------------------
 
