@@ -3,3 +3,4 @@ rewards_plot needs rewards_{*}.json file - convert to a df
 waiting_time_plot needs log files in Code/outputs/logs
 
 TODO: add moving avg to noisy plots
+TODO: make sure to update match case everywhere to use only finalised algos
