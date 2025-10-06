@@ -174,7 +174,7 @@ class AlgoConfigFactory:
             .framework('torch')
             .api_stack(enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True)
             .env_runners(num_env_runners=1, num_gpus_per_env_runner=0, rollout_fragment_length="auto") # GPU only on learners
-            .learners(num_learners=1, num_gpus_per_learner=1, num_cpus_per_learner=15) # GPU for training
+            .learners(num_learners=1, num_gpus_per_learner=1, num_cpus_per_learner=18) # GPU for training
             .training(**sac_hparams)
             .evaluation(
                 evaluation_interval=10,
