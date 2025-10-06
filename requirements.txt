@@ -18,7 +18,7 @@ ffmpeg==1.4
 filelock==3.18.0
 fonttools==4.59.0
 fsspec==2025.7.0
-gymnasium==1.0.0
+gymnasium==1.1.1
 idna==3.10
 imageio==2.37.0
 importlib_metadata @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_importlib-metadata_1747934053/work
@@ -78,7 +78,7 @@ pytz==2025.2
 PyVirtualDisplay==3.0
 PyYAML==6.0.2
 pyzmq @ file:///croot/pyzmq_1734687138743/work
-ray==2.49.0
+ray==2.49.2
 referencing==0.36.2
 requests==2.32.4
 rpds-py==0.27.0
