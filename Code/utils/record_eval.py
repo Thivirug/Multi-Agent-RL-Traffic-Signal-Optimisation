@@ -75,7 +75,7 @@ def _compute_actions(module: MultiRLModule, obs: dict, env: pettingzoo.utils.con
 
         # ! actions selection 
 
-        # ! For PPO - Outputs logits for each possible action for each agent
+        # ! For PPO & SAC - Outputs logits for each possible action for each agent
         if out.get("action_dist_inputs") is not None:
             # retrieve the class for the action distribution used during inference
             action_dist_class: abc.ABCMeta = module.get_inference_action_dist_cls()

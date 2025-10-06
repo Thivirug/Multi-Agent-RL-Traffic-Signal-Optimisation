@@ -66,7 +66,7 @@ def _compute_actions(module: MultiRLModule, obs: dict, env: pettingzoo.utils.con
     # Forward pass through the policy (greedy in the sense it uses the learned policy)
     out = module.forward_inference({"obs": obs_tensor})
 
-    # ! For PPO - Outputs logits for each possible action for each agent
+    # ! For PPO & SAC- Outputs logits for each possible action for each agent
     if out.get("action_dist_inputs") is not None:
         # sample the best action
         action_dist_class = module.get_inference_action_dist_cls()
