@@ -104,13 +104,26 @@ DQN_hparams = {
 SAC_hparams = {
     "twin_q": True,                # Use two Q-networks for the critics, to mitigate overestimation bias
     "gamma": 0.99,                 # discount factor
-    "tau" : 0.005,                 # Soft update coefficeint
-    "train_batch_size_per_learner" : 256, 
-    "num_steps_sampled_before_learning_starts": 5000, # number of steps to collect before training starts
-    "target_entropy": "auto",      # automatically tune the entropy coefficeint (alpha)
-    "target_network_update_freq": 1, # update target network every 'train_batch_size' steps. 1 is standards for soft updates
+    "tau": 0.005,                  # Soft update coefficient
+    "n_step": 1,                   # Use 1-step returns (standard for SAC)
+    "train_batch_size_per_learner": 256, 
+    "num_steps_sampled_before_learning_starts": 15000, # ~1.5 episodes before training starts (more exploration)
+    "target_entropy": "auto",      # automatically tune the entropy coefficient (alpha)
+    "target_network_update_freq": 1, # update target network every 'train_batch_size' steps. 
+    
+    # Replay buffer configuration (explicit for stability)
+    "replay_buffer_config": {
+        "type": "MultiAgentEpisodeReplayBuffer",
+        "capacity": 500000,        # Large enough for ~50 episodes
+    },
+    
+    # Learning rate scheduling for actor 
     "optimization_config": {
-        "actor_learning_rate": 3e-4,
+        "actor_learning_rate": [
+            [0, 3e-4],             # <- initial learning rate at timestep 0
+            [150000, 1e-4],        # <- learning rate at 150k timesteps
+            [350000, 5e-5],        # <- learning rate at 350k timesteps
+        ],
         "critic_learning_rate": 3e-4,
         "entropy_learning_rate": 3e-4,
     }
