@@ -102,8 +102,8 @@ def main() -> None:
             mean_episode_reward = result['env_runners'].get('episode_return_mean', {}) 
             print(f"\n\t -- Iteration {i+1} --- \n\tMean Episode Reward: {mean_episode_reward:.5f}")
 
-            # if using the old api stack
-            if algo_name == "sac":
+            # if using the old api stack (only APPO currently)
+            if algo_name == "appo":
                 agent_rewards_list = result['env_runners'].get('hist_stats', {}).get('policy_shared_policy_reward', [])
                 num_episodes = result['env_runners'].get('num_episodes', 0)
                 
@@ -118,6 +118,7 @@ def main() -> None:
                         agent_rewards = [agent_rewards_list[i] for i in range(idx, len(agent_rewards_list), num_agents)]
                         per_agent_mean[agent_id] = sum(agent_rewards) / len(agent_rewards)
             else:
+                # For new API stack (PPO, DQN, SAC)
                 per_agent_mean = result['env_runners'].get('agent_episode_returns_mean', {})
 
             print(f"\tPer Agent Mean Episode Reward: {per_agent_mean}")
@@ -135,9 +136,6 @@ def main() -> None:
                 "Mean per agent reward": per_agent_mean
             }
             results.append(result)
-
-            with open(json_path, "w") as f:
-                json.dump(results, f, indent=2)
 
     # dump to json 
     print(f"\n\t Dumping to {json_path}...\n")
