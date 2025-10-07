@@ -164,9 +164,6 @@ def plot_time_series_individual_with_uncertainty(
     for col in mean_df.columns: # iterate through each metric
         plt.figure(figsize=(14, 8))
         
-        # Plot mean line
-        plt.plot(mean_df.index, mean_df[col], linewidth=3, label=f'Mean ({n_episodes} episodes)', color='darkblue')
-        
         # Plot uncertainty band (mean ± std)
         plt.fill_between(
             mean_df.index, 
@@ -185,6 +182,15 @@ def plot_time_series_individual_with_uncertainty(
             alpha=0.3, 
             color='green', 
             label='Min-Max Range'
+        )
+
+        # Plot mean line
+        plt.plot(
+            mean_df.index,
+            mean_df[col], 
+            linewidth=3, 
+            label=f'Mean ({n_episodes} episodes)', 
+            color='darkblue'
         )
         
         plt.title(f"Traffic Signal Waiting Time: {col.replace('_', ' ').title()}\n"
