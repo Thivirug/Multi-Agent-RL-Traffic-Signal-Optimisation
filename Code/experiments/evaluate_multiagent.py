@@ -12,7 +12,6 @@ from ray.rllib.core.rl_module import MultiRLModule
 from ray.rllib.algorithms.ppo import PPO
 from ray.rllib.algorithms.dqn import DQN
 from ray.rllib.algorithms.sac import SAC
-from ray.rllib.algorithms.appo import APPO
 
 import torch
 from tqdm import trange
@@ -118,8 +117,6 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
             algo = DQN.from_checkpoint(checkpoint_dir)
         case 'sac':
             algo = SAC.from_checkpoint(checkpoint_dir)
-        case 'appo':
-            algo = APPO.from_checkpoint(checkpoint_dir)
         case _:
             raise ValueError("Algorithm can be ppo, dqn, or sac only !")
 

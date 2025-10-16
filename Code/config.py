@@ -17,11 +17,6 @@ ARG_DICT = {
         "n_iterations": 400,   
         "chkpoint_eval_freq": 10 # checkpointing and training eval freq
     },
-
-    "appo": {
-        "n_iterations": 200,   
-        "chkpoint_eval_freq": 10 # checkpointing and training eval freq
-    }
 }
 
 
@@ -127,37 +122,4 @@ SAC_hparams = {
         "critic_learning_rate": 3e-4,
         "entropy_learning_rate": 3e-4,
     }
-}
-
-
-#APPO Hyperparameters
-APPO_hparams = {
-    # Core APPO parameters (from documentation)
-    "vtrace": True,                    # Use V-trace weighted advantages
-    "use_gae": False,                  # Use GAE (only applies if vtrace=False)
-    "lambda_": 0.95,                   # GAE lambda parameter
-    "clip_param": 0.2,                 # PPO surrogate clipping parameter
-    
-    # Essential training parameters
-    "train_batch_size_per_learner": 256,  # Batch size per learner
-    "lr": 5e-4,                        # Learning rate (simplified for APPO)
-    "gamma": 0.99,                     # Discount factor
-    "vf_loss_coeff": 0.5,              # Value function loss coefficient
-    "entropy_coeff": 0.01,             # Entropy coefficient for exploration
-    
-    # KL divergence settings
-    "use_kl_loss": True,               # Whether to use KL-term in loss function
-    "kl_coeff": 0.2,                   # Coefficient for weighting KL-loss term
-    "kl_target": 0.01,                 # Target term for KL-term to reach
-    
-    # Target network updates
-    "target_network_update_freq": 1000, # Frequency to update target policy network
-    "tau": 0.005,                      # Factor for updating target policy network
-    
-    # Off-policy parameters
-    "target_worker_clipping": 1.0,     # Maximum value for target-worker-clipping (IS ratio)
-    
-    # Circular buffer configuration
-    "circular_buffer_num_batches": 4,   # Number of train batches in circular buffer
-    "circular_buffer_iterations_per_batch": 2, # Max sampling iterations per batch
 }

@@ -2,7 +2,7 @@
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, APPO_hparams, ARG_DICT
+from Code.config import ENV_CONFIG, PPO_hparams, DQN_hparams, SAC_hparams, ARG_DICT
 from algorithms import AlgoConfigFactory
 
 from ray.tune.registry import register_env 
@@ -43,7 +43,7 @@ def rename_logs(iter_n: int, algo_name: str) -> None:
 def main() -> None:
     # get algo config 
     print("\n ====== TRAINING START ======\n")
-    print("Algorithm Options: ppo, dqn, sac, appo")
+    print("Algorithm Options: ppo, dqn, sac")
     algo_name = input("Training algorithm: --> ")
 
     # update logs path with algo name
@@ -67,11 +67,9 @@ def main() -> None:
             config = factory.get_dqn_config(DQN_hparams)
         case "sac":
             config = factory.get_sac_config(SAC_hparams)
-        case "appo":
-            config = factory.get_appo_config(APPO_hparams)
         case _:
-            raise ValueError("Algorithm can be ppo, dqn, appo, or sac only !")
-        
+            raise ValueError("Algorithm can be ppo, dqn, or sac only !")
+
     # use algorithm specific args
     n_iterations = ARG_DICT[algo_name]['n_iterations']
     checkpoint_freq = ARG_DICT[algo_name]['chkpoint_eval_freq']
@@ -102,24 +100,8 @@ def main() -> None:
             mean_episode_reward = result['env_runners'].get('episode_return_mean', {}) 
             print(f"\n\t -- Iteration {i+1} --- \n\tMean Episode Reward: {mean_episode_reward:.5f}")
 
-            # if using the old api stack (only APPO currently)
-            if algo_name == "appo":
-                agent_rewards_list = result['env_runners'].get('hist_stats', {}).get('policy_shared_policy_reward', [])
-                num_episodes = result['env_runners'].get('num_episodes', 0)
-                
-                # Calculate per-agent mean rewards
-                agent_ids = ['1', '2', '5', '6']
-                per_agent_mean = {}
-                
-                if agent_rewards_list and num_episodes > 0:
-                    num_agents = len(agent_ids)
-                    for idx, agent_id in enumerate(agent_ids):
-                        # Get rewards for this agent across all episodes
-                        agent_rewards = [agent_rewards_list[i] for i in range(idx, len(agent_rewards_list), num_agents)]
-                        per_agent_mean[agent_id] = sum(agent_rewards) / len(agent_rewards)
-            else:
-                # For new API stack (PPO, DQN, SAC)
-                per_agent_mean = result['env_runners'].get('agent_episode_returns_mean', {})
+            # per agent mean rewards
+            per_agent_mean = result['env_runners'].get('agent_episode_returns_mean', {})
 
             print(f"\tPer Agent Mean Episode Reward: {per_agent_mean}")
 
