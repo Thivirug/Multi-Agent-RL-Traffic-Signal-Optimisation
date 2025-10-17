@@ -59,7 +59,7 @@ PPO_hparams = {
     'clip_param': 0.2,             # PPO clipping parameter
     'vf_clip_param': 10.0,         # Value function clipping parameter
     'gamma': 0.99,                 # Discount factor
-    'lambda_': 0.95,               # GAE lambda parameter
+    'lambda': 0.95,               # GAE lambda parameter
     'use_gae': True,               # Use Generalized Advantage Estimation
     'vf_loss_coeff': 0.5,          # Value function loss coefficient
     'grad_clip': 0.5,              # Gradient clipping
