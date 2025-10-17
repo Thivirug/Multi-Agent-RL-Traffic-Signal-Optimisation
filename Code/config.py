@@ -35,8 +35,8 @@ ENV_CONFIG = {
     'single_agent': False,     # Multi-agent setup
     'reward_fn': 'diff-waiting-time',  # computed based on changes during each delta_time window
     'add_per_agent_info': True,
-    'add_system_info': True,   # Add system-wide information for centralized training
-    'sumo_seed': 'random',     # Randomize traffic patterns # ! makes the algo more robust
+    'add_system_info': True,   
+    'sumo_seed': 'random',     
 }
 
 # ! ------- Algorithm hyperparams -------
