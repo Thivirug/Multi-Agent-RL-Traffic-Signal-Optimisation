@@ -25,6 +25,7 @@ import time
 import cv2
 import pettingzoo
 import abc
+import json
 
 def _get_env(max_steps: int, env_config: dict) -> pettingzoo.utils.conversions.aec_to_parallel_wrapper:
     """
@@ -97,7 +98,7 @@ def _compute_actions(module: MultiRLModule, obs: dict, env: pettingzoo.utils.con
 
         return actions_dict
 
-def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int, max_steps: int, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
+def _init_video_rec(video_dir: str, algo_name: str, ep: int, max_steps: int, env: pettingzoo.utils.conversions.aec_to_parallel_wrapper) -> tuple[cv2.VideoWriter, np.ndarray]:
     """
         Initialise video recording setup for given episode.
 
@@ -114,7 +115,7 @@ def _init_video_rec(video_dir: str, checkpoint_dir: str, algo_name: str, ep: int
     # Initialise video writer with OpenCV
     video_filename = os.path.join(
         video_dir, 
-        f'algorithm_{algo_name}_episode#_{ep+1}_iteration#_{_get_chkpoint_iteration(checkpoint_dir)}_max_steps_{max_steps}.mp4'
+        f'algorithm_{algo_name}_episode#_{ep+1}_max_steps_{max_steps}.mp4'
     )
 
     frame = env.render()  # Get initial frame to determine dims
@@ -201,7 +202,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         display = None
 
     # Directory to save videos
-    video_dir = os.path.join(os.path.abspath("Code/outputs/recordings"), f"{algo_name}")
+    video_dir = os.path.join(os.path.abspath("Code/outputs/recordings"), f"{algo_name}", f"_iter_{_get_chkpoint_iteration(checkpoint_dir)}")
     os.makedirs(video_dir, exist_ok=True)
 
     # Run eval loop for defined episodes
@@ -212,7 +213,7 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
         rewards = {agent: 0 for agent in env.possible_agents}
         print(f"Starting episode {ep+1}... ")
 
-        out, initial_frame = _init_video_rec(video_dir, checkpoint_dir, algo_name, ep, max_steps, env)
+        out, initial_frame = _init_video_rec(video_dir, algo_name, ep, max_steps, env)
         out.write(cv2.cvtColor(initial_frame, cv2.COLOR_RGB2BGR))  # Write initial frame
 
         while True:
