@@ -253,11 +253,26 @@ def main(checkpoint_dir: str, algo_name: str, max_steps: int = 20, num_episodes:
     if display:
         display.stop()
 
+    # dump episode rewards to a json file
+    rewards_filename = os.path.join(
+        video_dir,
+        f'algorithm_{algo_name}_episode_rewards_iter_{_get_chkpoint_iteration(checkpoint_dir)}.json'
+    )
+    with open(rewards_filename, 'w') as f:
+        json.dump(episode_rewards, f, indent=4)
+    print(f"\nEpisode rewards saved to {rewards_filename}")
+
     print("\n=== Evaluation Summary ===")
     for agent_id, rewards in episode_rewards.items():
         print(f"\nAgent {agent_id}:")
         print(f"\tmean reward = {np.mean(rewards)}")
         print(f"\tstd reward = {np.std(rewards)}")
+
+        # add per agent mean and std to a txt file
+        with open(rewards_filename.replace('.json', f'_summary.txt'), 'a') as f:
+            f.write(f"\nAgent {agent_id}:\n")
+            f.write(f"\tmean reward = {np.mean(rewards)}\n")
+            f.write(f"\tstd reward = {np.std(rewards)}\n")
 
 if __name__ == "__main__":
     args = _parse_args()
