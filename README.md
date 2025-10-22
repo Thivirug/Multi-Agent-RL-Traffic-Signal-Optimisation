@@ -5,6 +5,9 @@
 
 ```
 Multi-Agent-RL-Traffic-Signal-Optimisation/
+
+├── .gitignore                            # Git ignore rules
+│
 ├── 📁 Code/                              # Main application code
 │   ├── 📄 config.py                      # Configuration settings
 │   │
@@ -56,6 +59,7 @@ Multi-Agent-RL-Traffic-Signal-Optimisation/
 ├── 📄 requirements.txt                   # Python dependencies (Linux)
 ├── 📄 mac_requirements.txt               # Python dependencies (macOS)
 ├── 📄 MARL_notes.md                      # Multi-Agent RL notes
+├── 📄 multiepi_plot_exp.md               # Multi-episode plot experiment notes
 ├── 📄 notes.md                           # General project notes
 ├── 📄 ppo_working.md                     # PPO implementation notes
 └── 📄 logs_desc.md                       # Log file descriptions
