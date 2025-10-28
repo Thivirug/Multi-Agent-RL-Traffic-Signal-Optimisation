@@ -8,7 +8,7 @@ These columns provide statistics for the entire traffic network.
 *   **`system_total_arrived`**: The cumulative number of vehicles that have reached their destination.
 *   **`system_total_departed`**: The cumulative number of vehicles that have entered the simulation.
 *   **`system_total_teleported`**: The number of vehicles removed from the simulation, often because they were stuck for too long. A high number can indicate gridlock.
-*   **`system_total_waiting_time`**: The cumulative sum of waiting time for all vehicles in the system. A vehicle is considered "waiting" if its speed is below a certain threshold for some time.
+*   **`system_total_waiting_time`**: The cumulative sum of waiting time for all vehicles in the system. 
 *   **`system_mean_waiting_time`**: The average waiting time per vehicle across the entire system.
 *   **`system_mean_speed`**: The average speed of all vehicles in the system.
 
