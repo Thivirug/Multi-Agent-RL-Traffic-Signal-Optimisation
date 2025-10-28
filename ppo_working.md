@@ -41,8 +41,8 @@ PPO operates in iterations, where it collects data from the environment, compute
      \delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)
      $$
 
-     - $\gamma$ is the discount factor (your `gamma=0.99`).
-     - $\lambda$ is the GAE parameter (your `lambda_=0.95`).
+     - $\gamma$ is the discount factor (`gamma=0.99`).
+     - $\lambda$ is the GAE parameter (`lambda_=0.95`).
 
    - Advantages help the policy learn which actions lead to better outcomes.
 
@@ -83,7 +83,6 @@ PPO operates in iterations, where it collects data from the environment, compute
 
 6. **Gradient Clipping and Optimization**:
    - Apply gradient clipping (`grad_clip=0.5`) to prevent exploding gradients.
-   - Use an optimizer (e.g., Adam) with learning rate (`lr=2e-5`) to update weights over multiple epochs on the batch.
 
 ---
 
