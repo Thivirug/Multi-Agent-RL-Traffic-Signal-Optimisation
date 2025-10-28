@@ -1,6 +1,3 @@
-# Ignore virtual environment
-sumoenv/
-
 # Python cache
 __pycache__/
 *.pyc
