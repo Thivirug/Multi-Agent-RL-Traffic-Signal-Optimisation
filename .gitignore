@@ -8,14 +8,14 @@ __pycache__/
 # VSCode settings 
 .vscode/
 
-# Logs and outputs
-*.json
-
 # System files
 .DS_Store
 
-#outputs
-Code/outputs/
+# checkpoints, logs, recordings
+Code/outputs/checkpoints/
+Code/outputs/logs/
+Code/outputs/plots/
+Code/outputs/recordings/
 
 #requirements
 requirements_jake.txt
