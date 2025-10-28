@@ -10,7 +10,7 @@
 - **Cons**:
   - Poor coordination; one light’s green might block another’s flow, causing gridlock.
   - Struggles with non-stationarity (other lights’ policies change, making the environment unpredictable).
-- **Relevance to TSC**: Not ideal for 4x4 grid, where lights are interconnected. For example, a green wave (coordinated greens) across intersections won’t emerge naturally.
+- **Relevance to TSC**: Not ideal for grids, where lights are interconnected. For example, a green wave (coordinated greens) across intersections won’t emerge naturally.
 - **In RLlib**: Use separate policies for each agent (e.g., `policies={'agent_1': ..., 'agent_2': ...}`) with no `policy_mapping_fn` sharing.
 
 ## 2. Centralized Training with Decentralized Execution (CTDE) - Current Approach
@@ -49,7 +49,7 @@
 - **Cons**:
   - Adds complexity; requires defining communication channels (not natively in sumo-rl).
   - Increases observation space, slowing training.
-- **Relevance to TSC**: Useful if 4x4 grid has heavy congestion where local decisions fail. We could extend sumo-rl observations (e.g., add neighbor states), but this is advanced and optional.
+- **Relevance to TSC**: Useful if 2x2 grid has heavy congestion where local decisions fail. We could extend sumo-rl observations (e.g., add neighbor states), but this is advanced and optional.
 - **In RLlib**: Customize observation space in the policy (e.g., via a custom model) to include communication data.
 
 ## 5. Parameter Sharing (Current Approach)
@@ -63,44 +63,7 @@
 - **Cons**:
   - Assumes agents are similar; fails if intersections differ greatly (e.g., major vs. minor roads).
   - Limited coordination if rewards are too local (e.g., only own waiting time).
-- **Relevance to TSC**: This is the current setup with RLlib’s `shared_policy`. It’s ideal for 4x4 grid with uniform intersections and `diff-waiting-time` reward, which captures network effects. It’s the simplest cooperative architecture for your timeline.
-- **In RLlib**: Defined as `policies={'shared_policy': (None, None, None, {})}` with `policy_mapping_fn=lambda agent_id: 'shared_policy'`.
-
-## Key Takeaways for the Project
-
-- **Best Fit**: Use **Parameter Sharing (CTDE with shared policy)**, as implemented in current RLlib code. It’s efficient, matches sumo-rl’s design. The shared policy learns coordination implicitly via the reward.
-- **When to Adjust**:
-  - If coordination fails (e.g., gridlock), consider **Communication-Based** by adding neighbor data to observations.
-  - For tiny tests, try **Fully Centralized**, but switch back for scale.
-  - Avoid **Independent Learners**.
-- **Focus**: Tune the shared policy (e.g., adjust `entropy_coeff` for exploration) and reward function to enhance cooperation. Monitor `episode_reward_mean` to ensure network-wide improvement.
-
-## Current Setup
-In the current RLlib configuration (in Config.multi_agent())
-
-```py
-policies={'shared_policy': (None, None, None, {})}, policy_mapping_fn=lambda agent_id: 'shared_policy'
-```
-
-both parameter sharing and CTDE are employed because they complement each other in a cooperative MARL setting like TSC. 
-
-Here’s how they integrate:
-
-> Parameter Sharing as the Core Mechanism:
-
-The setup uses a single shared_policy for all traffic lights. This means the same neural network weights are applied to each agent’s local observation to produce actions. This is the "parameter sharing" part.
-Example: Light 1 and Light 2 both use the same policy to decide phases based on their respective lane data, trained on all agents’ experiences.
+- **Relevance to TSC**: This is the current setup with RLlib’s `shared_policy`. It’s ideal for 2x2 grid with uniform intersections and `diff-waiting-time` reward, which captures network effects. It’s the simplest cooperative architecture for your timeline.
 
 
-> CTDE as the Training Strategy:
-
-RLlib’s PPO implementation, by default, supports CTDE when using a shared policy. During training, the algorithm collects data from all agents (e.g., their observations, actions, and rewards) and uses a centralized value function to compute advantages. This value function can consider the global state (implicitly through the shared policy’s updates across agents) to stabilize learning.
-At execution (e.g., during algo.evaluate()), each agent uses only its local observation to act, making it decentralized.
-Example: The policy learns that a green phase at one light might reduce waiting time network-wide, guided by the centralized training data, but each light decides based on its own traffic.
-
-
-How They Overlap:
-
-Parameter sharing is a specific implementation choice within the CTDE framework. The shared policy acts as the decentralized execution component, while the training process leverages centralized data aggregation (all agents’ rollouts) to update that single policy.
-In RLlib, the default PPO setup with a shared policy automatically incorporates CTDE because it pools experiences across agents to train the shared model, aligning with the cooperative goal of minimizing total delay (e.g., via diff-waiting-time reward).
 
