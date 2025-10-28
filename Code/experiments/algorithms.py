@@ -12,11 +12,6 @@ from ray.rllib.algorithms.algorithm_config import AlgorithmConfig
 import pettingzoo
 from gymnasium.spaces import Space
 
-# ! NOTE :         
-# Using CTDE: Single shared policy for all agents (parameter sharing)
-# Training aggregates rollouts from all agents (centralized).
-# Execution: Each agent inputs its local observation to the shared policy (decentralized). - Done in evaluate_multiagent.py
-
 class AlgoConfigFactory:
     """
         Common class to define ray rl algorithms with CTDE support.
