@@ -84,7 +84,6 @@ DQN_hparams = {
     "double_q": True,                    # Use double Q-learning
     "dueling": True,                     # Use dueling network architecture
     
-    # Replay buffer settings (for new API stack)
     # Using non-prioritized buffer for stability in long training runs
     "replay_buffer_config": {
         "type": "MultiAgentEpisodeReplayBuffer",  # Non-prioritized - more stable
